@@ -37,7 +37,7 @@ tokenizer = mobileclip.get_tokenizer(checkpoint)
 device = ("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
-def get_image_embeddings(image_path):
+def get_clip_image(image_path):
     """
     Gets the image embeddings for the given image path.
 
@@ -53,7 +53,7 @@ def get_image_embeddings(image_path):
         image_features = model.encode_image(image)
     return image_features.cpu().squeeze(0).numpy().tolist()
 
-def get_text_embeddings(text):
+def get_clip_text(text):
     """
     Gets the text embeddings for the given text.
 
