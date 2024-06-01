@@ -1,5 +1,7 @@
 __pycache__/
+db/
 checkpoints/
+Everything-SDK/
 images/
 ml-mobileclip/
 images_paths.txt

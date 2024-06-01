@@ -1,11 +1,45 @@
 import ctypes
+import requests
+from tqdm import tqdm
+import os
+from zipfile import ZipFile 
 
 # Constants
 EVERYTHING_REQUEST_FILE_NAME = 0x00000001
 EVERYTHING_REQUEST_PATH = 0x00000002
 
 # DLL imports
-everything_dll = ctypes.WinDLL("C:\\Everything-SDK\\DLL\\Everything64.dll")
+try:
+    everything_dll = ctypes.WinDLL("Index\\Everything-SDK\\DLL\\Everything64.dll")
+except:
+    url = f"https://www.voidtools.com/Everything-SDK.zip"
+    response = requests.get(url, stream=True)
+
+    file_size = int(response.headers.get("Content-Length", 0))
+    chunk_size = 1024  # 1 KB
+    filename = url.split("/")[-1]
+
+    progress = tqdm(
+        response.iter_content(chunk_size),
+        f"Downloading {filename}",
+        total=file_size,
+        unit="B",
+        unit_scale=True,
+        unit_divisor=1024,
+    )
+    with open(f"Index/{filename}", "wb") as f:
+        for data in progress.iterable:
+            f.write(data)
+            progress.update(len(data))
+
+    # unzip the downloaded file
+    with ZipFile(f"Index/{filename}", "r") as zip_ref:
+        zip_ref.extractall("Index/Everything-SDK")
+    # delete the downloaded zip file
+    os.remove(f"Index/{filename}")
+    # load the DLL
+    everything_dll = ctypes.WinDLL("Index\\Everything-SDK\\DLL\\Everything64.dll")
+
 everything_dll.Everything_GetResultDateModified.argtypes = [
     ctypes.c_int,
     ctypes.POINTER(ctypes.c_ulonglong),
