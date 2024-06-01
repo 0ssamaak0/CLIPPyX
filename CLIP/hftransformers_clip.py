@@ -1,9 +1,12 @@
 from transformers import CLIPProcessor, CLIPModel
 import torch
 from PIL import Image
+import yaml
 
-# define checkpoint TODO from config later
-checkpoint = "openai/clip-vit-base-patch16"
+# Load the configuration file
+with open('config.yaml', 'r') as f:
+    config = yaml.safe_load(f)
+checkpoint = config['clip']['transformers_clip_checkpoint']
 
 # load model and tokenizer
 model = CLIPModel.from_pretrained(checkpoint)

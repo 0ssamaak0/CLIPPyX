@@ -2,6 +2,11 @@ import requests
 from tqdm import tqdm
 from llama_cpp import Llama
 import os
+import yaml
+# Load the configuration file
+with open('config.yaml', 'r') as f:
+    config = yaml.safe_load(f)
+quantization_method = config['text_embed']['quantization_method']
 
 
 def download_nomic_embed(checkpoint):
@@ -33,8 +38,6 @@ def download_nomic_embed(checkpoint):
             progress.update(len(data))
 
 
-# Select quantization method
-quantization_method = "Q4_0"
 checkpoint = f"nomic-embed-text-v1.5.{quantization_method}"
 if not os.path.exists(f"checkpoints/{checkpoint}.gguf"):
     download_nomic_embed(checkpoint)

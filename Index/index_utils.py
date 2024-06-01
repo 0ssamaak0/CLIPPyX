@@ -2,9 +2,20 @@ import chromadb
 from tqdm import tqdm
 import os
 import sys
+import yaml
 
-from CLIP.mobile_clip import get_clip_image, get_clip_text
-from text_embeddings.llamacpp_embeddings import get_text_embeddings
+# Load the configuration file
+with open('config.yaml', 'r') as f:
+    config = yaml.safe_load(f)
+
+if config['clip']['provider'] == "mobileclip":
+    from CLIP.mobile_clip import get_clip_image, get_clip_text
+elif config['clip']['provider'] == "transformers":
+    from CLIP.hftransformers_clip import get_clip_image, get_clip_text
+if config['text_embed']['provider'] == "llama_cpp":
+    from text_embeddings.llamacpp_embeddings import get_text_embeddings
+elif config['text_embed']['provider'] == "transformers":
+    from text_embeddings.hftransformers_embeddings import get_text_embeddings
 from OCR import apply_OCR
 
 

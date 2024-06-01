@@ -4,7 +4,12 @@ import torch
 from PIL import Image
 import mobileclip
 import os
+import yaml
 
+# Load the configuration file
+with open('config.yaml', 'r') as f:
+    config = yaml.safe_load(f)
+checkpoint = config['clip']['mobileclip_checkpoint']
 
 def download_mobile_clip(checkpoint):
     """
@@ -34,8 +39,6 @@ def download_mobile_clip(checkpoint):
             progress.update(len(data))
 
 
-# define checkpoint TODO from config later
-checkpoint = "mobileclip_s0"
 if not os.path.exists(f"checkpoints/{checkpoint}.pt"):
     print(f"checkpoints/{checkpoint}.pt")
     download_mobile_clip(checkpoint)
