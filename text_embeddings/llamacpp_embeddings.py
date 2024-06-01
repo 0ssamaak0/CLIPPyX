@@ -47,6 +47,7 @@ llm = Llama(
     verbose=False,
 )
 
+
 def get_text_embeddings(text):
     """
     Gets the text embeddings for the given text.

@@ -1,7 +1,16 @@
-import easyocr
-reader = easyocr.Reader(['en'])
+import torch
+from doctr.models import ocr_predictor
+import matplotlib.pyplot as plt
 
-def apply_OCR(image_path, OCR_threshold = 0.5):
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model = ocr_predictor(
+    "db_mobilenet_v3_large", "crnn_mobilenet_v3_large", pretrained=True
+)
+model.to(device)
+
+
+def apply_OCR(image_path, OCR_threshold=0.5):
     """
     Applies Optical Character Recognition (OCR) on an image and returns the recognized text.
 
@@ -13,9 +22,27 @@ def apply_OCR(image_path, OCR_threshold = 0.5):
         str or None: The recognized text if any text is detected, otherwise None.
     """
     try:
-        result = reader.readtext(image_path)
-        text = " ".join(detection[1] for detection in result if detection[2] > OCR_threshold)
-        text = text.replace(",", "")
-        return text if text else None
+        image = plt.imread(image_path)
+        if image.shape[-1] == 4:
+            image = image[..., :3]
     except Exception as e:
+        # print(f"Error: {e} in {image_path}")
         return None
+
+    results = model([image])
+    blocks = results.pages[0].blocks
+    try:
+        text = " ".join(
+            word.value
+            for block in blocks
+            for line in block.lines
+            for word in line.words
+            if word.confidence > OCR_threshold
+        )
+    except:
+        text = None
+    if text == "" or (
+        text is not None and (not any(char.isalpha() for char in text) or len(text) < 3)
+    ):
+        text = None
+    return text

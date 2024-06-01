@@ -2,4 +2,4 @@ __pycache__/
 checkpoints/
 images/
 ml-mobileclip/
-file_names.txt
+images_paths.txt
