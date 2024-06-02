@@ -1,19 +1,25 @@
-server_os: wsl  # OR "windows"
+server_os: windows  # OR "windows"
 # CLIP for Image and search query embedding
 clip:
-    provider: transformers  # OR "transformers"
+    # provider = ["transformers" or "mobileclip"]
+    provider: transformers
+
     # if using "mobileclip"
     # Check https://github.com/apple/ml-mobileclip/tree/main?tab=readme-ov-file#evaluation
     mobileclip_checkpoint: mobileclip_s0
+
     # if using "transformers"
     # Check https://huggingface.co/models?other=clip,endpoints_compatible&sort=trending or any compatible model
     transformers_clip_checkpoint: openai/clip-vit-base-patch16
 
 # Text embedding model for OCR and search query embedding
 text_embed:
-    provider: transformers  # OR "transformers"
+    # provider = ["transformers" or "llama_cpp"]
+    provider: transformers
+    
     # if using "llama_cpp"
     # Check https://huggingface.co/nomic-ai/nomic-embed-text-v1.5-GGUF/tree/main
     quantization_method: Q4_0
+
     # if using "transformers"
     # Check https://huggingface.co/nomic-ai/nomic-embed-text-v1.5 or any compatible model and change tokenizer and model name in text_embeddings/transformers_embeddings.py

@@ -7,7 +7,7 @@ with open('config.yaml', 'r') as f:
 
 subprocess.run(["python", "Index/everything_images.py"])
 if config["server_os"] == "wsl":
-    print("Runnin in WSL")
+    print("Running in WSL")
     subprocess.check_call(["wsl", "-e", "bash", "server_wsl.sh"])
 elif config["server_os"] == "windows":
     print("Running in Windows")

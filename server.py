@@ -21,7 +21,6 @@ def search_clip_text(text, image_collection):
     Returns:
         tuple: A tuple containing the paths of the top 5 images and their distances from the input text.
     """
-    print(text)
     text_embedding = get_clip_text(text)
     results = image_collection.query(text_embedding, n_results=5)
     distances = results["distances"][0]
@@ -74,16 +73,16 @@ app = Flask(__name__)
 def clip_text_route():
     text = request.json.get("text", "")
     paths, distances = search_clip_text(text, image_collection)
-    # for path, distance in zip(paths, distances):
-    #     print(f"Path: {path}, Distance: {distance}")
+    for path, distance in zip(paths, distances):
+        print(f"Path: {path}, Distance: {distance}")
     return jsonify(paths)
 
 @app.route("/clip_image", methods=["POST"])
 def clip_image_route():
     image_path = request.json.get("image_path", "")
     paths, distances = search_clip_image(image_path, image_collection)
-    # for path, distance in zip(paths, distances):
-    #     print(f"Path: {path}, Distance: {distance}")
+    for path, distance in zip(paths, distances):
+        print(f"Path: {path}, Distance: {distance}")
     return jsonify(paths)
 
 
@@ -91,8 +90,8 @@ def clip_image_route():
 def ebmed_text_route():
     text = request.json.get("text", "")
     paths, distances = search_embed_text(text, text_collection)
-    # for path, distance in zip(paths, distances):
-    #     print(f"Path: {path}, Distance: {distance}")
+    for path, distance in zip(paths, distances):
+        print(f"Path: {path}, Distance: {distance}")
     return jsonify(paths)
 
 
