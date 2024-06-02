@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from Index.index_utils import *
 import warnings
 
@@ -72,6 +73,7 @@ def search_embed_text(text, text_collection):
 
 # Flask App
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/clip_text", methods=["POST"])

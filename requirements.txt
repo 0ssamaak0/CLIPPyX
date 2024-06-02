@@ -8,3 +8,4 @@ einops==0.8.0
 python-doctr==0.8.1
 PyYAML==6.0.1
 Flask
+flask-cors

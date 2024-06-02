@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" href="https://raw.githubusercontent.com/0ssamaak0/CLIPPyX/main/assets/icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask API Interaction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-bar,
+        .dropdown {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .search-bar input,
+        .dropdown select,
+        button {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .search-bar input:focus,
+        .dropdown select:focus,
+        button:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            flex: 0 1 auto;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .results {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+
+        .results img {
+            margin: 5px;
+            height: 200px;
+            /* Increased from 100px to 200px */
+            object-fit: contain;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .results img:hover {
+            transform: scale(1.05);
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin: auto;
+        }
+
+        .modern-select {
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            width: 200px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: url('https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-arrow-down-b-128.png') no-repeat right #ffffff;
+            background-size: 25px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="display: flex; justify-content: center; margin: 20px">
+        <img src="https://raw.githubusercontent.com/0ssamaak0/CLIPPyX/main/assets/logo_text.png" alt="CLIPPyX Logo"
+            style="height: 200px;">
+    </div>
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Enter text to search">
+            <select id="route-select" class="modern-select" onchange="changePlaceholder()">
+                <option value="clip_text">Caption search</option>
+                <option value="ebmed_text">Text content search</option>
+                <option value="clip_image">similar images search</option>
+            </select>
+            <button onclick="performSearch()" style="margin: 0 10px;">Search</button>
+        </div>
+        <div class="loader" id="loader"></div>
+        <div class="results" id="results"></div>
+    </div>
+    <footer style="margin-top: 20px; text-align: center;">
+        <p> <i class="fab fa-github"></i>
+            <a href="https://github.com/0ssamaak0/CLIPPyX">
+                CLIPPyX
+            </a>
+        </p>
+    </footer>
+
+    <script>
+        function changePlaceholder() {
+            var select = document.getElementById('route-select');
+            var input = document.getElementById('search-input');
+
+            if (select.value == 'clip_text') {
+                input.placeholder = 'Enter image caption or description';
+            } else if (select.value == 'clip_image') {
+                input.placeholder = 'Enter image full path';
+            } else if (select.value == 'ebmed_text') {
+                input.placeholder = 'Enter text to search for images with similar text';
+            }
+        }
+        function performSearch() {
+            const query = document.getElementById('search-input').value;
+            const route = document.getElementById('route-select').value;
+            const url = `http://localhost:5000/${route}`;
+            const loader = document.getElementById('loader');
+            const resultsDiv = document.getElementById('results');
+
+            loader.style.display = 'block';
+            resultsDiv.innerHTML = '';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: query, image_path: query })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    loader.style.display = 'none';
+                    data.forEach(path => {
+                        const img = document.createElement('img');
+                        img.src = path;
+                        img.onclick = () => window.open(path);
+                        resultsDiv.appendChild(img);
+                    });
+                })
+                .catch(error => {
+                    loader.style.display = 'none';
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>
