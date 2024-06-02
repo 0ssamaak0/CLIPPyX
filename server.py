@@ -42,9 +42,9 @@ def search_clip_image(image_path, image_collection):
     if os.name == "posix": 
         image_path = image_path.replace("\\", "/").replace("C:", "/mnt/c")
     image_embedding = get_clip_image(image_path)
-    results = image_collection.query(image_embedding, n_results=5)
-    distances = results["distances"][0]
-    paths = results["ids"][0]
+    results = image_collection.query(image_embedding, n_results=6)
+    distances = results["distances"][0][1:]
+    paths = results["ids"][0][1:]
     return paths, distances
 
 def search_embed_text(text, text_collection):
