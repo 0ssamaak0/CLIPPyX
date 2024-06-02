@@ -1,4 +1,4 @@
-server_os: windows  # OR "windows"
+server_os: wsl  # OR "windows"
 # CLIP for Image and search query embedding
 clip:
     provider: transformers  # OR "transformers"

@@ -1,10 +1,8 @@
-import yaml
+import chromadb
+from tqdm import tqdm
 
-# Load the configuration file
-with open('config.yaml', 'r') as f:
-    config = yaml.safe_load(f)
-checkpoint = config['clip']['transformers_clip_checkpoint']
+chroma_client = chromadb.PersistentClient(path="windows_db")
+collection = chroma_client.get_or_create_collection(name="my_collection")
 
-# load model and tokenizer
-model = CLIPModel.from_pretrained(checkpoint)
-processor = CLIPProcessor.from_pretrained(checkpoint)
+for i in tqdm(range(200)):
+    collection.upsert(ids = str(i), embeddings = [i, i, i])

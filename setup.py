@@ -23,7 +23,7 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=["db", "checkpoints", "Everything-SDK", "images", "ml-mobileclip", "CLIPPyX.egg-info/"]),
     entry_points={
         "console_scripts": [
-            "CLIPPyX=main:main"
+            "CLIPPyX=main"
         ]
     }
 )

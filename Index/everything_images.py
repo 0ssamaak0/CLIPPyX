@@ -100,7 +100,7 @@ def save_file_names(file_names, file_path):
         for file_name in file_names:
             f.write(file_name + "\n")
 
-    print(f"Paths of all images found on {file_path}")
+    print(f"Paths of all images saved in {file_path}")
 
 
 if __name__ == "__main__":

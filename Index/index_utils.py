@@ -19,10 +19,6 @@ elif config['text_embed']['provider'] == "transformers":
 from OCR import apply_OCR
 
 
-import warnings
-
-warnings.filterwarnings("ignore")
-
 
 def create_vectordb(path):
     """
@@ -106,7 +102,7 @@ def index_images(os_paths, original_paths, image_collection, text_collection):
     ):
         if len(image_collection.get(ids=original_paths[i])["ids"]) > 0:
             continue
-        image_embeddings = get_clip_image(os_paths[i])
+        image_embeddings = get_clip_image(os_paths[0])
         image_collection.upsert(ids=[original_paths[i]], embeddings=image_embeddings)
         ocr_text = apply_OCR(os_paths[i])
         if ocr_text is not None:
