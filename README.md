@@ -78,6 +78,16 @@ Getting the Paths of all images must be done in **Windows** to run `Everything S
 - in your **Windows** powershell or command prompt , run `CLIPPyX` command. This will use Everything SDK in Windows, then start the server in **WSL**.
 
 # User Interface
-Having CLIPPyX server running, you can use any UI capable of sending HTTP requests to the server. Currently, only [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher) is supported.
+Having CLIPPyX server running, you can use any UI capable of sending HTTP requests to the server, you can customize any UI to do this, or use one of the provided UIs.
 
-Check [Flow Launcher Plugin](https://github.com/0ssamaak0/CLIPPyX/tree/main/UI/Flow%20Launcher) for setup process.
+Check [UI page](https://github.com/0ssamaak0/CLIPPyX/tree/main/UI) to check available options.
+
+
+# Future Work
+- currently any search query shows by default the top `5` matches regardless of the similarity score. Thresholding the similarity score to show only the relevant results should be implemented, noting that each case (and each model) might have different optimal threshold.
+
+- Powertoys Run Integration
+
+- Execlude some files from index (index now includes all image files)
+
+- Extending beyond Windows to support Linux and Mac and different UIs e.g., Raycast, Alfred
