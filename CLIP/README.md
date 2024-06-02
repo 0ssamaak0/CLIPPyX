@@ -1,6 +1,6 @@
 # Using MobileCLIP
 
-There's an option to run CLIPPyX using Apple's [MobileCLIP](https://github.com/apple/ml-mobileclip/tree/main) which is faster and consumes less memory [more details in paper](https://arxiv.org/pdf/2311.17049)
+There's an option to run `CLIPPyX` using Apple's [MobileCLIP](https://github.com/apple/ml-mobileclip/tree/main) which is faster and consumes less memory [more details in paper](https://arxiv.org/pdf/2311.17049)
 
 - Clone MobileCLIP repository in this dir
 - follow the installation options
