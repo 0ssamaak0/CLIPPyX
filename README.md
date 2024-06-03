@@ -86,10 +86,4 @@ Check [UI page](https://github.com/0ssamaak0/CLIPPyX/tree/main/UI) to check avai
 
 
 # Future Work
-- currently any search query shows by default the top `5` matches regardless of the similarity score. Thresholding the similarity score to show only the relevant results should be implemented, noting that each case (and each model) might have different optimal threshold.
-
-- Powertoys Run Integration
-
-- Execlude some files from index (index now includes all image files)
-
-- Extending beyond Windows to support Linux and Mac and different UIs e.g., Raycast, Alfred
+Check [Issues](https://github.com/0ssamaak0/CLIPPyX/issues) for future work and contributions. don't hesitate to open a new issue for any feature request or bug report.
