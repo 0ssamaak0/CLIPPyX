@@ -1,8 +1,23 @@
-server_os: windows  # OR "windows"
+# Specify the server operating system
+server_os: wsl  # OR "windows"
+
+# Folders settings: Select folders to include / exclude for indexing
+include_folders:
+    - all # default (Comment this if you want to specify folders)
+    # - path/to/folder1
+    # - path/to/folder2
+
+exclude_folders:
+    # - path/to/folder1
+    # - path/to/folder2
+
+
+
+
 # CLIP for Image and search query embedding
 clip:
     # provider = ["transformers" or "mobileclip"]
-    provider: transformers
+    provider: mobileclip
 
     # if using "mobileclip"
     # Check https://github.com/apple/ml-mobileclip/tree/main?tab=readme-ov-file#evaluation
@@ -15,7 +30,7 @@ clip:
 # Text embedding model for OCR and search query embedding
 text_embed:
     # provider = ["transformers" or "llama_cpp"]
-    provider: transformers
+    provider: llama_cpp
     
     # if using "llama_cpp"
     # Check https://huggingface.co/nomic-ai/nomic-embed-text-v1.5-GGUF/tree/main
