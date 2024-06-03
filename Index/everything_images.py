@@ -3,6 +3,17 @@ import requests
 from tqdm import tqdm
 import os
 from zipfile import ZipFile 
+import yaml
+
+# Load the configuration file
+with open('config.yaml', 'r') as f:
+    config = yaml.safe_load(f)
+
+include_folders = config['include_folders']
+exclude_folders = config['exclude_folders']
+
+print(include_folders)
+print(exclude_folders)
 
 # Constants
 EVERYTHING_REQUEST_FILE_NAME = 0x00000001
