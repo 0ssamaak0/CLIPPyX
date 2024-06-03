@@ -10,6 +10,8 @@ CLIPPyX is a powerful system-wide image search and management tool that offers v
 
 ![CLIPPyX Demo](assets/fastgif.gif)
 
+🎬 [Video at 1x speed](https://x.com/0ssamaak0/status/1797373251049713827)
+
 # Main Features
 - **Search by Image Caption**: Enter descriptive text or phrases, using CLIP, CLIPPyX will return all images related to that semantic meaning or caption.
 
