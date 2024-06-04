@@ -117,7 +117,6 @@
         }
     </style>
 </head>
-
 <body>
     <div style="display: flex; justify-content: center; margin: 20px">
         <img src="https://raw.githubusercontent.com/0ssamaak0/CLIPPyX/main/assets/logo_text.png" alt="CLIPPyX Logo"
@@ -160,7 +159,8 @@
         function performSearch() {
             const query = document.getElementById('search-input').value;
             const route = document.getElementById('route-select').value;
-            const url = `http://localhost:5000/${route}`;
+            const port = window.location.port || 8080;  // Default to 8080 if no port is specified
+            const url = `http://${window.location.hostname}:${port}/${route}`;
             const loader = document.getElementById('loader');
             const resultsDiv = document.getElementById('results');
 
@@ -174,21 +174,23 @@
                 },
                 body: JSON.stringify({ text: query, image_path: query })
             })
-                .then(response => response.json())
-                .then(data => {
-                    loader.style.display = 'none';
-                    data.forEach(path => {
-                        const img = document.createElement('img');
-                        img.src = path;
-                        img.onclick = () => window.open(path);
-                        resultsDiv.appendChild(img);
-                    });
-                })
-                .catch(error => {
-                    loader.style.display = 'none';
-                    console.error('Error:', error);
+            .then(response => response.json())
+            .then(data => {
+                loader.style.display = 'none';
+                data.forEach(path => {
+                    const img = document.createElement('img');
+                    img.src = `http://${window.location.hostname}:${port}/images/${encodeURIComponent(path)}`;
+                    img.onclick = () => window.open(img.src);
+                    resultsDiv.appendChild(img);
                 });
+            })
+            .catch(error => {
+                loader.style.display = 'none';
+                console.error('Error:', error);
+            });
         }
+
+        changePlaceholder();
     </script>
 </body>
 
