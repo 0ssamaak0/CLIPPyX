@@ -20,7 +20,7 @@ def get_clip_image(image_path: str):
     Gets the image embeddings for the given image path.
 
     Args:
-        image_path (str): The path to the image file.
+        image_path (str): The path to the image file in UTF-16 code unit sequence.
 
     Returns:
         list: The image embeddings as a list.
