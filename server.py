@@ -7,7 +7,7 @@ import os
 warnings.filterwarnings("ignore")
 
 image_collection, text_collection = create_vectordb("db")
-original_paths, os_paths = get_images_paths("db/image_index.db")
+original_paths, os_paths = get_images_paths("images_paths.txt")
 index_images(os_paths, original_paths, image_collection, text_collection)
 clean_index(original_paths, image_collection, text_collection)
 
