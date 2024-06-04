@@ -37,7 +37,8 @@ CLIPPyX server receives the search query from the UI, then it queries the collec
 
 # Getting Started
 ## Basic Installation
-- Install [Pytorch](https://pytorch.org/)
+- Install & Run [Everything](https://www.voidtools.com/) in your Windows machine
+- Install in your env[Pytorch](https://pytorch.org/)
 - Clone the repository
 - in the root directory, run the command
 
