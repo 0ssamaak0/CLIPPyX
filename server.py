@@ -114,6 +114,8 @@ def serve_index():
 @app.route("/images/<path:filename>")
 def serve_image(filename):
     filename = os.path.join("/", filename)
+    if os.name == "posix":
+        filename = filename.replace("\\", "/").replace("C:", "/mnt/c")
     # # Not needed for now
     # LOCAL_IMAGE_DIR = os.getenv("LOCAL_IMAGE_DIR")
     # assert filename.startswith(LOCAL_IMAGE_DIR)
