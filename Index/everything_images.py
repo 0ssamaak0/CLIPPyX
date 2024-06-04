@@ -75,12 +75,19 @@ def search_files(formats=["*.png", "*.jpg", "*.jpeg"]):
     """
     file_names = []
 
-    for format in formats:
+    for file_format in formats:
         # Create buffers
         filename = ctypes.create_unicode_buffer(260)
 
+        # Create search query with include and exclude paths
+        query = file_format
+        if 'all' not in include_folders:
+            query += " " + " | ".join(f'"{path}"' for path in include_folders)
+        elif exclude_folders:
+            query += " " + " ".join(f'!"{path}"' for path in exclude_folders)
+        
         # Setup search
-        everything_dll.Everything_SetSearchW(format)
+        everything_dll.Everything_SetSearchW(query)
         everything_dll.Everything_SetRequestFlags(
             EVERYTHING_REQUEST_FILE_NAME | EVERYTHING_REQUEST_PATH
         )
@@ -107,7 +114,7 @@ def save_file_names(file_names, file_path):
         file_names (list): List of file names to save.
         file_path (str): Path to the text file to save the file names in.
     """
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding='utf-16') as f:
         for file_name in file_names:
             f.write(file_name + "\n")
 

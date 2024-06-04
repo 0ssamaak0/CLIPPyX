@@ -9,6 +9,7 @@ include_folders:
     # - path/to/folder2
 
 exclude_folders:
+    - "C:\\$Recycle.Bin"
     # - path/to/folder1
     # - path/to/folder2
 

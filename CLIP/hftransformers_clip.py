@@ -15,7 +15,7 @@ processor = CLIPProcessor.from_pretrained(checkpoint)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model.to(device)
 
-def get_clip_image(image_path):
+def get_clip_image(image_path: str):
     """
     Gets the image embeddings for the given image path.
 
@@ -25,7 +25,7 @@ def get_clip_image(image_path):
     Returns:
         list: The image embeddings as a list.
     """
-    image = Image.open(image_path)
+    image = Image.open(image_path.encode("utf-16").decode("utf-16"))
     with torch.no_grad():
         processed_image = processor(images=image, return_tensors="pt").to(device)
         image_features = model.get_image_features(**processed_image)
