@@ -74,7 +74,7 @@ def search_files(formats=["*.png", "*.jpg", "*.jpeg"]):
         list: List of full path names of the found files.
     """
     file_names = []
-
+    recycle_bin_string = "C:\\$Recycle.Bin"
     for format in formats:
         # Create buffers
         filename = ctypes.create_unicode_buffer(260)
@@ -94,7 +94,9 @@ def search_files(formats=["*.png", "*.jpg", "*.jpeg"]):
         # Show results
         for i in range(num_results):
             everything_dll.Everything_GetResultFullPathNameW(i, filename, 260)
-            file_names.append(ctypes.wstring_at(filename))
+            file_name = ctypes.wstring_at(filename)
+            if recycle_bin_string not in file_name:
+                file_names.append(file_name)
 
     return file_names
 
@@ -107,7 +109,7 @@ def save_file_names(file_names, file_path):
         file_names (list): List of file names to save.
         file_path (str): Path to the text file to save the file names in.
     """
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding='utf-16') as f:
         for file_name in file_names:
             f.write(file_name + "\n")
 

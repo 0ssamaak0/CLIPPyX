@@ -67,7 +67,7 @@ def get_images_paths(file_path):
         and the second list contains the OS-specific paths.
     """
     original_paths = []
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding='utf-16') as f:
         for line in f:
             original_paths.append(line.strip())
 
@@ -102,9 +102,14 @@ def index_images(os_paths, original_paths, image_collection, text_collection):
     ):
         if len(image_collection.get(ids=original_paths[i])["ids"]) > 0:
             continue
-        image_embeddings = get_clip_image(os_paths[i])
+        path = os_paths[i]
+        try:
+            image_embeddings = get_clip_image(path)
+        except PermissionError:
+            print(f"Access Denied at {path}")
+            continue
         image_collection.upsert(ids=[original_paths[i]], embeddings=image_embeddings)
-        ocr_text = apply_OCR(os_paths[i])
+        ocr_text = apply_OCR(path)
         if ocr_text is not None:
             text_embeddings = get_text_embeddings(ocr_text)
             text_collection.upsert(ids=[original_paths[i]], embeddings=text_embeddings)
