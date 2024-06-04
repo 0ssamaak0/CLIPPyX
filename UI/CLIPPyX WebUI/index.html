@@ -11,14 +11,14 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-color: #f4f4f9;
-            color: #333;
+            background-color: var(--background-color);
+            color: var(--text-color);
         }
 
         .container {
             max-width: 800px;
             margin: auto;
-            background-color: #fff;
+            background-color: var(--container-background-color);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -36,9 +36,11 @@
         button {
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--border-color);
             flex: 1;
             margin-right: 10px;
+            background-color: var(--input-background-color);
+            color: var(--input-text-color);
         }
 
         .search-bar input:focus,
@@ -70,11 +72,11 @@
         .results img {
             margin: 5px;
             height: 200px;
-            /* Increased from 100px to 200px */
             object-fit: contain;
             cursor: pointer;
             border-radius: 5px;
             transition: transform 0.3s ease;
+            border: 3px solid transparent;
         }
 
         .results img:hover {
@@ -98,12 +100,26 @@
             width: 200px;
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--border-color);
+            color: var(--input-text-color);
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
-            background: url('https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-arrow-down-b-128.png') no-repeat right #ffffff;
+            background: url('https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-arrow-down-b-128.png') no-repeat right var(--select-background-color);
             background-size: 25px;
+        }
+
+        .enlarged-img {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .enlarged-img img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 10px;
+            cursor: pointer;
         }
 
         @keyframes spin {
@@ -115,8 +131,35 @@
                 transform: rotate(360deg);
             }
         }
+
+        .selected-img {
+            border-color: #007bff !important;
+        }
+
+        :root {
+            --background-color: #f4f4f9;
+            --text-color: #333;
+            --container-background-color: #fff;
+            --border-color: #ccc;
+            --input-background-color: #fff;
+            --input-text-color: #333;
+            --select-background-color: #ffffff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: #181818;
+                --text-color: #e0e0e0;
+                --container-background-color: #242424;
+                --border-color: #555;
+                --input-background-color: #333;
+                --input-text-color: #e0e0e0;
+                --select-background-color: #333;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div style="display: flex; justify-content: center; margin: 20px">
         <img src="https://raw.githubusercontent.com/0ssamaak0/CLIPPyX/main/assets/logo_text.png" alt="CLIPPyX Logo"
@@ -174,23 +217,21 @@
                 },
                 body: JSON.stringify({ text: query, image_path: query })
             })
-            .then(response => response.json())
-            .then(data => {
-                loader.style.display = 'none';
-                data.forEach(path => {
-                    const img = document.createElement('img');
-                    img.src = `http://${window.location.hostname}:${port}/images/${encodeURIComponent(path)}`;
-                    img.onclick = () => window.open(img.src);
-                    resultsDiv.appendChild(img);
+                .then(response => response.json())
+                .then(data => {
+                    loader.style.display = 'none';
+                    data.forEach(path => {
+                        const img = document.createElement('img');
+                        img.src = `http://${window.location.hostname}:${port}/images/${encodeURIComponent(path)}`;
+                        img.onclick = () => window.open(img.src);
+                        resultsDiv.appendChild(img);
+                    });
+                })
+                .catch(error => {
+                    loader.style.display = 'none';
+                    console.error('Error:', error);
                 });
-            })
-            .catch(error => {
-                loader.style.display = 'none';
-                console.error('Error:', error);
-            });
         }
-
-        changePlaceholder();
     </script>
 </body>
 
