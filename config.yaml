@@ -4,11 +4,13 @@ server_os: windows
 
 # Folders settings: Select folders to include / exclude for indexing
 include_folders:
-    - all # default (Comment this if you want to specify folders)
+    # - all # default (Comment this if you want to specify folders)
+    - "C:\\Users\\youse\\Pictures"
     # - path/to/folder1
     # - path/to/folder2
 
 exclude_folders:
+    - "C:\\$Recycle.Bin"
     # - path/to/folder1
     # - path/to/folder2
 

@@ -74,13 +74,17 @@ def search_files(formats=["*.png", "*.jpg", "*.jpeg"]):
         list: List of full path names of the found files.
     """
     file_names = []
-    recycle_bin_string = "C:\\$Recycle.Bin"
-    for format in formats:
-        # Create buffers
-        filename = ctypes.create_unicode_buffer(260)
 
+    for file_format in formats:
+        # Create search query with include and exclude paths
+        query = file_format
+        if 'all' not in include_folders:
+            query += " " + " | ".join(f'"{path}"' for path in include_folders)
+        elif exclude_folders:
+            query += " " + " ".join(f'!"{path}"' for path in exclude_folders)
+        
         # Setup search
-        everything_dll.Everything_SetSearchW(format)
+        everything_dll.Everything_SetSearchW(query)
         everything_dll.Everything_SetRequestFlags(
             EVERYTHING_REQUEST_FILE_NAME | EVERYTHING_REQUEST_PATH
         )
@@ -93,10 +97,9 @@ def search_files(formats=["*.png", "*.jpg", "*.jpeg"]):
 
         # Show results
         for i in range(num_results):
+            filename = ctypes.create_unicode_buffer(260)
             everything_dll.Everything_GetResultFullPathNameW(i, filename, 260)
-            file_name = ctypes.wstring_at(filename)
-            if recycle_bin_string not in file_name:
-                file_names.append(file_name)
+            file_names.append(ctypes.wstring_at(filename))
 
     return file_names
 
