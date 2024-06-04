@@ -75,33 +75,32 @@ def search_files(formats=["*.png", "*.jpg", "*.jpeg"]):
     """
     file_names = []
 
-    for file_format in formats:
-        # Create buffers
-        filename = ctypes.create_unicode_buffer(260)
+    # Create buffers
+    filename = ctypes.create_unicode_buffer(260)
 
-        # Create search query with include and exclude paths
-        query = file_format
-        if 'all' not in include_folders:
-            query += " " + " | ".join(f'"{path}"' for path in include_folders)
-        elif exclude_folders:
-            query += " " + " ".join(f'!"{path}"' for path in exclude_folders)
-        
-        # Setup search
-        everything_dll.Everything_SetSearchW(query)
-        everything_dll.Everything_SetRequestFlags(
-            EVERYTHING_REQUEST_FILE_NAME | EVERYTHING_REQUEST_PATH
-        )
+    # Create search query with include and exclude paths
+    query = '|'.join(formats)
+    if 'all' not in include_folders:
+        query += " " + " | ".join(f'"{path}"' for path in include_folders)
+    elif exclude_folders:
+        query += " " + " ".join(f'!"{path}"' for path in exclude_folders)
+    
+    # Setup search
+    everything_dll.Everything_SetSearchW(query)
+    everything_dll.Everything_SetRequestFlags(
+        EVERYTHING_REQUEST_FILE_NAME | EVERYTHING_REQUEST_PATH
+    )
 
-        # Execute the query
-        everything_dll.Everything_QueryW(1)
+    # Execute the query
+    everything_dll.Everything_QueryW(1)
 
-        # Get the number of results
-        num_results = everything_dll.Everything_GetNumResults()
+    # Get the number of results
+    num_results = everything_dll.Everything_GetNumResults()
 
-        # Show results
-        for i in range(num_results):
-            everything_dll.Everything_GetResultFullPathNameW(i, filename, 260)
-            file_names.append(ctypes.wstring_at(filename))
+    # Show results
+    for i in range(num_results):
+        everything_dll.Everything_GetResultFullPathNameW(i, filename, 260)
+        file_names.append(ctypes.wstring_at(filename))
 
     return file_names
 
