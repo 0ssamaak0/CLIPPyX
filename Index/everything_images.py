@@ -107,7 +107,7 @@ def save_file_names(file_names, file_path):
         file_names (list): List of file names to save.
         file_path (str): Path to the text file to save the file names in.
     """
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding='utf-16') as f:
         for file_name in file_names:
             f.write(file_name + "\n")
 
