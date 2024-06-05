@@ -53,17 +53,17 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 model.to(device)
 
 
-def get_clip_image(image_path: str):
+def get_clip_image(image_path):
     """
     Gets the image embeddings for the given image path.
 
     Args:
-        image_path (str): The path to the image file in UTF-16 code unit sequence.
+        image_path (str): The path to the image file.
 
     Returns:
         list: The image embeddings as a list.
     """
-    image = Image.open(image_path.encode("utf-16").decode("utf-16"))
+    image = Image.open(image_path)
     image = preprocess(image.convert("RGB")).unsqueeze(0).to(device)
     with torch.no_grad(), torch.cuda.amp.autocast():
         image_features = model.encode_image(image)

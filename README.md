@@ -43,7 +43,7 @@ CLIPPyX server receives the search query from the UI, then it queries the collec
 - in the root directory, run the command
 
 ```
-pip intsall -e .
+pip install -e .
 ```
 - to start CLIPPyX server, run 
 ```
