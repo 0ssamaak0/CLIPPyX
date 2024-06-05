@@ -67,7 +67,7 @@ def get_images_paths(file_path):
         and the second list contains the OS-specific paths.
     """
     original_paths = []
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding='utf-16') as f:
         for line in f:
             original_paths.append(line.strip())
 
