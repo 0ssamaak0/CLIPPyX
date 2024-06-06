@@ -106,7 +106,7 @@ def ebmed_text_route():
     return jsonify(paths)
 
 
-@app.route("/index")
+@app.route("/")
 def serve_index():
     return send_from_directory(app.static_folder, "index.html")
 
@@ -124,5 +124,4 @@ def serve_image(filename):
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
-    print(f"You can access the web interface at http://localhost:{port}/index after starting the server.")
     app.run(host="0.0.0.0", port=port)
