@@ -9,8 +9,11 @@ import yaml
 with open('config.yaml', 'r') as f:
     config = yaml.safe_load(f)
 
-include_folders = config['include_folders']
-exclude_folders = config['exclude_folders']
+include_folders: list = config['include_folders']
+exclude_folders: list = config['exclude_folders']
+
+recycle_bin_path = os.path.join(os.environ.get('SystemDrive'), '\$Recycle.Bin')
+exclude_folders.append(recycle_bin_path) if exclude_folders else exclude_folders.append(recycle_bin_path)
 
 print(include_folders)
 print(exclude_folders)
@@ -75,26 +78,32 @@ def search_files(formats=["*.png", "*.jpg", "*.jpeg"]):
     """
     file_names = []
 
-    for format in formats:
-        # Create buffers
-        filename = ctypes.create_unicode_buffer(260)
+    # Create buffers
+    filename = ctypes.create_unicode_buffer(260)
 
-        # Setup search
-        everything_dll.Everything_SetSearchW(format)
-        everything_dll.Everything_SetRequestFlags(
-            EVERYTHING_REQUEST_FILE_NAME | EVERYTHING_REQUEST_PATH
-        )
+    # Create search query with include and exclude paths
+    query = '|'.join(formats)
+    if include_folders and 'all' not in include_folders:
+        query += " " + " | ".join(f'"{path}"' for path in include_folders)
+    elif exclude_folders:
+        query += " " + " ".join(f'!"{path}"' for path in exclude_folders)
 
-        # Execute the query
-        everything_dll.Everything_QueryW(1)
+    # Setup search
+    everything_dll.Everything_SetSearchW(query)
+    everything_dll.Everything_SetRequestFlags(
+        EVERYTHING_REQUEST_FILE_NAME | EVERYTHING_REQUEST_PATH
+    )
 
-        # Get the number of results
-        num_results = everything_dll.Everything_GetNumResults()
+    # Execute the query
+    everything_dll.Everything_QueryW(1)
 
-        # Show results
-        for i in range(num_results):
-            everything_dll.Everything_GetResultFullPathNameW(i, filename, 260)
-            file_names.append(ctypes.wstring_at(filename))
+    # Get the number of results
+    num_results = everything_dll.Everything_GetNumResults()
+
+    # Show results
+    for i in range(num_results):
+        everything_dll.Everything_GetResultFullPathNameW(i, filename, 260)
+        file_names.append(ctypes.wstring_at(filename))
 
     return file_names
 
