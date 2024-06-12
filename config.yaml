@@ -30,7 +30,7 @@ clip:
 
 # Text embedding model for OCR and search query embedding
 text_embed:
-    # provider = ["transformers" or "llama_cpp"]
+    # provider = ["transformers" , "ollama", "llama_cpp"]
     provider: transformers
     
     # if using "llama_cpp"

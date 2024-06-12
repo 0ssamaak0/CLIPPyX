@@ -1,3 +1,13 @@
+# Using Ollama
+- Download [Ollama](https://ollama.com/download)
+- Download nomic-embed-test quantized model
+```bash
+ollama pull 0ssamaak0/nomic-embed-text
+```
+- in `config.yaml`, `text_embed:` set `provider` to `ollama`
+
+Note: If you have Ollama already installed, make sure you're on `v0.1.43` or later.
+
 # Using llama.cpp
 
 There's an option to run `CLIPPyX` using `GGUF` quantized models from [Llama cpp python](https://github.com/abetlen/llama-cpp-python) which is faster and consumes less memory
