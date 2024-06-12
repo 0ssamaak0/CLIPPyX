@@ -1,12 +1,16 @@
 # Using Ollama
 - Download [Ollama](https://ollama.com/download)
-- Download nomic-embed-test quantized model
+- Download nomic-embed-text `Q4_0` quantized model
 ```bash
 ollama pull 0ssamaak0/nomic-embed-text
 ```
 - in `config.yaml`, `text_embed:` set `provider` to `ollama`
 
-Note: If you have Ollama already installed, make sure you're on `v0.1.43` or later.
+
+
+## Notes: 
+- If you have Ollama already installed, make sure you're on `v0.1.43` or later.
+- [nomic-embed-text](https://ollama.com/library/nomic-embed-text) is already available on Ollama, but this model is `F16` quantized.
 
 # Using llama.cpp
 
