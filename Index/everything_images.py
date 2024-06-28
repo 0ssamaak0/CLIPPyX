@@ -9,15 +9,6 @@ import yaml
 with open('config.yaml', 'r') as f:
     config = yaml.safe_load(f)
 
-include_folders: list = config['include_folders']
-exclude_folders: list = config['exclude_folders']
-
-recycle_bin_path = os.path.join(os.environ.get('SystemDrive'), '\$Recycle.Bin')
-exclude_folders.append(recycle_bin_path) if exclude_folders else exclude_folders.append(recycle_bin_path)
-
-print(include_folders)
-print(exclude_folders)
-
 # Constants
 EVERYTHING_REQUEST_FILE_NAME = 0x00000001
 EVERYTHING_REQUEST_PATH = 0x00000002
