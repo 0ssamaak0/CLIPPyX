@@ -6,3 +6,6 @@ images/
 ml-mobileclip/
 images_paths.txt
 CLIPPyX.egg-info/
+
+*.csv
+*.db
