@@ -57,14 +57,14 @@ After some automatic downloads (Everything SDK, Models from 🤗 Transformers), 
  * Debug mode: off
 INFO:werkzeug:WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
  * Running on all addresses (0.0.0.0)
- * Running on http://127.0.0.1:5000
- * Running on http://172.25.97.13:5000
+ * Running on http://127.0.0.1:23107
+ * Running on http://172.25.97.13:23107
  ```
 
 you can check the server is running be sending a simple request to the server using CURL or Postman.
 
 ```
-curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"Enter your query here\"}" http://localhost:5000/clip_text
+curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"Enter your query here\"}" http://localhost:23107/clip_text
 ```
 ## Alternative Models
 For more memory efficient and faster indexing and search, there're alternative for both `CLIP` and `Text Embedding` models
