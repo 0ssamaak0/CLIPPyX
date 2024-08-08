@@ -86,8 +86,8 @@ CORS(app)
 
 @app.route("/clip_text", methods=["POST"])
 def clip_text_route():
-    text = request.json.get("text", "")
-    paths, distances = search_clip_text(text, image_collection)
+    query = request.json.get("query", "")
+    paths, distances = search_clip_text(query, image_collection)
     # for path, distance in zip(paths, distances):
     #     print(f"Path: {path}, Distance: {distance}")
     return jsonify(paths)
@@ -95,8 +95,8 @@ def clip_text_route():
 
 @app.route("/clip_image", methods=["POST"])
 def clip_image_route():
-    image_path = request.json.get("image_path", "")
-    paths, distances = search_clip_image(image_path, image_collection)
+    query = request.json.get("query", "")
+    paths, distances = search_clip_image(query, image_collection)
     # for path, distance in zip(paths, distances):
     #     print(f"Path: {path}, Distance: {distance}")
     return jsonify(paths)
@@ -104,8 +104,8 @@ def clip_image_route():
 
 @app.route("/ebmed_text", methods=["POST"])
 def ebmed_text_route():
-    text = request.json.get("text", "")
-    paths, distances = search_embed_text(text, text_collection)
+    query = request.json.get("query", "")
+    paths, distances = search_embed_text(query, text_collection)
     # for path, distance in zip(paths, distances):
     #     print(f"Path: {path}, Distance: {distance}")
     return jsonify(paths)
