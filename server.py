@@ -4,6 +4,8 @@ from Index.index_utils import *
 from Index.scan_all import read_from_sqlite
 import warnings
 import os
+import requests
+from io import BytesIO
 
 warnings.filterwarnings("ignore")
 
@@ -14,6 +16,29 @@ os_paths = original_paths
 print("number of paths: ", len(original_paths))
 index_images(os_paths, original_paths, image_collection, text_collection)
 clean_index(original_paths, image_collection, text_collection)
+
+
+def parse_image(image_path):
+    """
+    Parses an image from a given path or URL.
+
+    If the image_path is a URL (starts with 'http://' or 'https://'), the function fetches the image
+    from the web and returns a BytesIO object containing the image data. If the image_path is a local
+    file path, it simply returns the path as is.
+
+    Parameters:
+    - image_path (str): The path or URL to the image.
+
+    Returns:
+    - BytesIO or str: A BytesIO object containing the image data if the image_path is a URL,
+                      or the image_path itself if it's a local file path.
+    """
+    if image_path.startswith("http://") or image_path.startswith("https://"):
+        response = requests.get(image_path)
+        return BytesIO(response.content)
+    else:
+        image_path = image_path.strip('"').strip("'")
+        return image_path
 
 
 def search_clip_text(text, image_collection):
@@ -45,7 +70,6 @@ def search_clip_image(image_path, image_collection, get_self=False):
     Returns:
         tuple: A tuple containing two lists. The first list contains the paths of the top 5 images (or top 6 if get_self is True). The second list contains the corresponding distances of these images from the input image.
     """
-    image_path = image_path.strip('"').strip("'")
     # TODO handle wsl later
     # if os.name == "posix":
     #     image_path = image_path.replace("\\", "/").replace("C:", "/mnt/c")
@@ -96,6 +120,7 @@ def clip_text_route():
 @app.route("/clip_image", methods=["POST"])
 def clip_image_route():
     query = request.json.get("query", "")
+    query = parse_image(query)
     paths, distances = search_clip_image(query, image_collection)
     # for path, distance in zip(paths, distances):
     #     print(f"Path: {path}, Distance: {distance}")
