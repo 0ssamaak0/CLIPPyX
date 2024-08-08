@@ -20,7 +20,7 @@ export default function Command() {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ image_path: searchText }),
+    body: JSON.stringify({ query: searchText }),
   });
 
   useEffect(() => {
