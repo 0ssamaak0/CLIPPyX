@@ -2,15 +2,15 @@ import ctypes
 import requests
 from tqdm import tqdm
 import os
-from zipfile import ZipFile 
+from zipfile import ZipFile
 import yaml
 
 # Load the configuration file
-with open('config.yaml', 'r') as f:
+with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 
-include_folders = config['include_folders']
-exclude_folders = config['exclude_folders']
+include_folders = config["include_folders"]
+exclude_folders = config["exclude_folders"]
 
 print(include_folders)
 print(exclude_folders)
@@ -63,9 +63,10 @@ everything_dll.Everything_GetResultFileNameW.argtypes = [ctypes.c_int]
 everything_dll.Everything_GetResultFileNameW.restype = ctypes.c_wchar_p
 
 
-def search_files(formats=["*.png", "*.jpg", "*.jpeg"]):
+def search_EverythingSDK(formats=["*.png", "*.jpg", "*.jpeg"]):
     """
     Search for files with the given formats and return their full path names.
+    This function works only if the Everything search engine is installed on the system and Everything64.dll is available.
 
     Args:
         formats (list): List of file formats to search for.
@@ -97,25 +98,3 @@ def search_files(formats=["*.png", "*.jpg", "*.jpeg"]):
             file_names.append(ctypes.wstring_at(filename))
 
     return file_names
-
-
-def save_file_names(file_names, file_path):
-    """
-    Save the file names to a text file.
-
-    Args:
-        file_names (list): List of file names to save.
-        file_path (str): Path to the text file to save the file names in.
-    """
-    with open(file_path, "w", encoding='utf-16') as f:
-        for file_name in file_names:
-            f.write(file_name + "\n")
-
-    print(f"Paths of all images saved in {file_path}")
-
-
-if __name__ == "__main__":
-    # Search for files
-    file_names = search_files()
-    # Save file names to text file
-    save_file_names(file_names, "images_paths.txt")

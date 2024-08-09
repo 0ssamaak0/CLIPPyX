@@ -1,21 +1,19 @@
 from flask import Flask, abort, request, jsonify, send_from_directory
 from flask_cors import CORS
-from Index.index_utils import *
-from Index.scan_all import read_from_sqlite
+from Index.create_db import *
+from Index.scan import scan_and_save
+
 import warnings
 import os
 import requests
 from io import BytesIO
 
-warnings.filterwarnings("ignore")
-
+scanned = scan_and_save()
+if not scanned:
+    raise Exception("Error scanning images")
 image_collection, text_collection = create_vectordb("db")
-# original_paths, os_paths = get_images_paths("images_paths.txt")
-original_paths = read_from_sqlite("images.db")
-os_paths = original_paths
-print("number of paths: ", len(original_paths))
-index_images(os_paths, original_paths, image_collection, text_collection)
-clean_index(original_paths, image_collection, text_collection)
+index_images(image_collection, text_collection)
+clean_index(image_collection, text_collection)
 
 
 def parse_image(image_path):
@@ -74,14 +72,14 @@ def search_clip_image(image_path, image_collection, get_self=False):
     # if os.name == "posix":
     #     image_path = image_path.replace("\\", "/").replace("C:", "/mnt/c")
     image_embedding = get_clip_image(image_path)
-    if not get_self:
-        results = image_collection.query(image_embedding, n_results=6)
-        distances = results["distances"][0][1:]
-        paths = results["ids"][0][1:]
-    else:
-        results = image_collection.query(image_embedding, n_results=5)
-        distances = results["distances"][0]
-        paths = results["ids"][0]
+    results = image_collection.query(image_embedding, n_results=5)
+    distances = results["distances"][0]
+    paths = results["ids"][0]
+    for i in range(len(paths)):
+        if paths[i] == image_path:
+            paths.pop(i)
+            distances.pop(i)
+            break
     return paths, distances
 
 
