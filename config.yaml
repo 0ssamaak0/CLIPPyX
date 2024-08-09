@@ -2,16 +2,19 @@
 # server_os = ["windows" or "wsl"]
 server_os: windows
 
-# Folders settings: Select folders to include / exclude for indexing
-include_folders:
-    - everything # default using everything SDK (Comment this if you want to specify folders)
+# Directories settings: Select directories to include / exclude for indexing
+scan_method: default # default by scanning all files
+# scan_method: Everything # using Everything SDK (Windows only & Required to install Everything)
+    
+include_directories:
     # - path/to/folder1
     # - path/to/folder2
 
-exclude_folders:
+exclude_directories:
     # - path/to/folder1
     # - path/to/folder2
 
+deep_scan: true # handles files with same names
 
 # CLIP for Image and search query embedding
 clip:
