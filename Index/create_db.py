@@ -78,6 +78,7 @@ def index_images(image_collection, text_collection):
                 average = image_collection.get(ids=paths[i])["metadatas"][0]["average"]
                 if average == averages[i]:
                     continue
+            continue
         image_embeddings = get_clip_image(paths[i])
         image_collection.upsert(
             ids=[paths[i]],

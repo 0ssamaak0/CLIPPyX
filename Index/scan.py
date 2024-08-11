@@ -18,7 +18,7 @@ def save_to_csv(image_paths, filename="paths.csv", save_average=False):
         if save_average:
             writer.writerow(["path", "average"])
         else:
-            writer.writerow(["path"])
+            writer.writerow(["path", "average"])
         for path in tqdm(image_paths):
             if save_average:
                 try:
@@ -35,7 +35,7 @@ def save_to_csv(image_paths, filename="paths.csv", save_average=False):
                 except Exception as e:
                     print(f"Error processing {path}: {e}")
             else:
-                writer.writerow([path])
+                writer.writerow([path, 0])
     print(f"Image paths{' and averages' if save_average else ''} saved to {filename}")
 
 
