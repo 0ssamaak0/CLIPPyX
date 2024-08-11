@@ -1,7 +1,7 @@
 import torch
 from doctr.models import ocr_predictor
-import matplotlib.pyplot as plt
-
+from PIL import Image
+import numpy as np
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model = ocr_predictor(
@@ -22,9 +22,12 @@ def apply_OCR(image_path, OCR_threshold=0.5):
         str or None: The recognized text if any text is detected, otherwise None.
     """
     try:
-        image = plt.imread(image_path)
+        image = Image.open(image_path)
+        image = np.array(image)
         if image.shape[-1] == 4:
-            image = image[..., :3]
+            image = image[:, :, :3]
+        if len(image.shape) == 2:
+            image = np.stack([image] * 3, axis=-1)
     except Exception as e:
         # print(f"Error: {e} in {image_path}")
         return None
@@ -42,7 +45,9 @@ def apply_OCR(image_path, OCR_threshold=0.5):
     except:
         text = None
     if text == "" or (
-        text is not None and (not any(char.isalpha() for char in text) or len(text) < 3)
+        text is not None
+        and (not any(char.isalpha() for char in text) or len(text) < 3)
+        or all(len(word) == 1 for word in text.split() if word.isalpha())
     ):
         text = None
     return text
