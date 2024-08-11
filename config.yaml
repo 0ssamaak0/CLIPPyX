@@ -15,6 +15,7 @@ exclude_directories:
     # - path/to/folder2
 
 deep_scan: true # handles files with same names
+batch_size: 32 # batch size for indexing
 
 # CLIP for Image and search query embedding
 clip:

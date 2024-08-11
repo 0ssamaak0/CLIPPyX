@@ -10,6 +10,7 @@ with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 
 deep_scan = config["deep_scan"]
+batch_size = config["batch_size"]
 
 if config["clip"]["provider"] == "transformers":
     from CLIP.hftransformers_clip import get_clip_image, get_clip_text
@@ -71,24 +72,46 @@ def index_images(image_collection, text_collection):
         text_collection (Collection): The text collection in the database.
     """
     paths, averages = read_from_csv("paths.csv")
-    for i, image in tqdm(enumerate(paths), total=len(paths), desc="Creating VectorDB"):
-        if len(image_collection.get(ids=paths[i])["ids"]) > 0:
-            if deep_scan:
-                # Check if the average pixel value has changed
-                average = image_collection.get(ids=paths[i])["metadatas"][0]["average"]
-                if average == averages[i]:
-                    continue
-            continue
-        image_embeddings = get_clip_image(paths[i])
-        image_collection.upsert(
-            ids=[paths[i]],
-            embeddings=image_embeddings,
-            metadatas={"average": averages[i]},
-        )
-        ocr_text = apply_OCR(paths[i])
-        if ocr_text is not None:
-            text_embeddings = get_text_embeddings(ocr_text)
-            text_collection.upsert(ids=[paths[i]], embeddings=text_embeddings)
+    for i in tqdm(range(0, len(paths), batch_size)):
+        batch_paths = paths[i : i + batch_size]
+        to_process = []
+
+        for path in batch_paths:
+            if len(image_collection.get(ids=[path])["ids"]) > 0:
+                if deep_scan:
+                    # Check if the average pixel value has changed
+                    average = image_collection.get(ids=[path])["metadatas"][0][
+                        "average"
+                    ]
+                    if average != averages[paths.index(path)]:
+                        to_process.append(path)
+            else:
+                to_process.append(path)
+
+        if to_process:
+            # Process CLIP embeddings in batch
+            batch_embeddings = get_clip_image(to_process)
+
+            # Prepare data for batch upsert
+            upsert_ids = to_process
+            upsert_embeddings = batch_embeddings
+            upsert_metadatas = [
+                {"average": averages[paths.index(path)]} for path in to_process
+            ]
+
+            # Perform batch upsert for image collection
+            image_collection.upsert(
+                ids=upsert_ids,
+                embeddings=upsert_embeddings,
+                metadatas=upsert_metadatas,
+            )
+
+            # Process OCR and text embeddings individually
+            for path in to_process:
+                ocr_text = apply_OCR(path)
+                if ocr_text is not None:
+                    text_embeddings = get_text_embeddings(ocr_text)
+                    text_collection.upsert(ids=[path], embeddings=[text_embeddings])
 
 
 def clean_index(image_collection, text_collection):
