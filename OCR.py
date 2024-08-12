@@ -1,5 +1,6 @@
 import torch
 from doctr.models import ocr_predictor
+from concurrent.futures import ThreadPoolExecutor
 from PIL import Image
 import numpy as np
 
@@ -10,30 +11,36 @@ model = ocr_predictor(
 model.to(device)
 
 
-def apply_OCR(image_path, OCR_threshold=0.5):
+def process_image(image_path):
     """
-    Applies Optical Character Recognition (OCR) on an image and returns the recognized text.
+    Opens and preprocesses a single image.
 
     Args:
-        image_path (str): The path to the image file.
-        OCR_threshold (float, optional): The confidence threshold for the OCR detection. Defaults to 0.5.
+            image_path (str): The path to the image file.
+    Returns:
+            np.array: The preprocessed image tensor.
+    """
+    image = Image.open(image_path)
+    image = np.array(image)
+    if image.shape[-1] == 4:
+        image = image[:, :, :3]
+    if len(image.shape) == 2:
+        image = np.stack([image] * 3, axis=-1)
+    return image
+
+
+def process_page(page, OCR_threshold):
+    """
+    Processes a single OCR page and extracts text based on a confidence threshold.
+
+    Args:
+        page: An OCR page object containing blocks, lines, and words.
+        OCR_threshold (float): The confidence threshold for including words in the extracted text.
 
     Returns:
-        str or None: The recognized text if any text is detected, otherwise None.
+        str: The extracted text if it meets the criteria, otherwise None.
     """
-    try:
-        image = Image.open(image_path)
-        image = np.array(image)
-        if image.shape[-1] == 4:
-            image = image[:, :, :3]
-        if len(image.shape) == 2:
-            image = np.stack([image] * 3, axis=-1)
-    except Exception as e:
-        # print(f"Error: {e} in {image_path}")
-        return None
-
-    results = model([image])
-    blocks = results.pages[0].blocks
+    blocks = page.blocks
     try:
         text = " ".join(
             word.value
@@ -51,3 +58,27 @@ def apply_OCR(image_path, OCR_threshold=0.5):
     ):
         text = None
     return text
+
+
+def apply_OCR(image_paths, OCR_threshold=0.5):
+    """
+    Applies Optical Character Recognition (OCR) on images and returns the recognized text.
+
+    Args:
+        image_paths (list of str): The paths to the image files.
+        OCR_threshold (float, optional): The confidence threshold for the OCR detection. Defaults to 0.5.
+
+    Returns:
+        list of str or None: The recognized text for each image if any text is detected, otherwise None.
+    """
+    with ThreadPoolExecutor() as executor:
+        images = list(executor.map(process_image, image_paths))
+    results = model(images)
+
+    def process_page_wrapper(page):
+        return process_page(page, OCR_threshold)
+
+    with ThreadPoolExecutor() as executor:
+        texts = list(executor.map(process_page_wrapper, results.pages))
+
+    return texts
