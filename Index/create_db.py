@@ -3,7 +3,7 @@ from tqdm import tqdm
 import os
 import sys
 import yaml
-from Index.scan import read_from_csvs
+from Index.scan import read_from_csv
 import warnings
 
 warnings.filterwarnings("ignore")
