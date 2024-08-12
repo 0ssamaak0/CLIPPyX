@@ -1,19 +1,12 @@
 from flask import Flask, abort, request, jsonify, send_from_directory
 from flask_cors import CORS
-from Index.create_db import *
-from Index.scan import scan_and_save
+from Index.create_db import create_vectordb, get_clip_image, get_clip_text
 
-import warnings
 import os
 import requests
 from io import BytesIO
 
-scanned = scan_and_save()
-if not scanned:
-    raise Exception("Error scanning images")
 image_collection, text_collection = create_vectordb("db")
-index_images(image_collection, text_collection)
-clean_index(image_collection, text_collection)
 
 
 def parse_image(image_path):
@@ -71,7 +64,7 @@ def search_clip_image(image_path, image_collection, get_self=False):
     # TODO handle wsl later
     # if os.name == "posix":
     #     image_path = image_path.replace("\\", "/").replace("C:", "/mnt/c")
-    image_embedding = get_clip_image(image_path)
+    image_embedding = get_clip_image([image_path])
     results = image_collection.query(image_embedding, n_results=5)
     distances = results["distances"][0]
     paths = results["ids"][0]
