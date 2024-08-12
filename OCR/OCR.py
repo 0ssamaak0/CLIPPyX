@@ -81,4 +81,5 @@ def apply_OCR(image_paths, OCR_threshold=0.5):
     with ThreadPoolExecutor() as executor:
         texts = list(executor.map(process_page_wrapper, results.pages))
 
+    # delete model and free up memory
     return texts
