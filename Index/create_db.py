@@ -3,7 +3,10 @@ from tqdm import tqdm
 import os
 import sys
 import yaml
-from Index.scan import read_from_csv
+from Index.scan import read_from_csvs
+import warnings
+
+warnings.filterwarnings("ignore")
 
 # Load the configuration file
 with open("config.yaml", "r") as f:
@@ -23,7 +26,7 @@ elif config["text_embed"]["provider"] == "ollama":
     from text_embeddings.ollama_embeddings import get_text_embeddings
 if config["text_embed"]["provider"] == "llama_cpp":
     from text_embeddings.llamacpp_embeddings import get_text_embeddings
-from OCR import apply_OCR
+from ocr_model.OCR import apply_OCR
 
 
 def create_vectordb(path):
@@ -72,46 +75,49 @@ def index_images(image_collection, text_collection):
         text_collection (Collection): The text collection in the database.
     """
     paths, averages = read_from_csv("paths.csv")
-    for i in tqdm(range(0, len(paths), batch_size)):
-        batch_paths = paths[i : i + batch_size]
-        to_process = []
+    with tqdm(total=len(paths), desc="Indexing images") as pbar:
+        for i in range(0, len(paths), batch_size):
+            batch_paths = paths[i : i + batch_size]
+            to_process = []
 
-        for path in batch_paths:
-            if len(image_collection.get(ids=[path])["ids"]) > 0:
-                if deep_scan:
-                    # Check if the average pixel value has changed
-                    average = image_collection.get(ids=[path])["metadatas"][0][
-                        "average"
-                    ]
-                    if average != averages[paths.index(path)]:
-                        to_process.append(path)
-            else:
-                to_process.append(path)
+            for path in batch_paths:
+                if len(image_collection.get(ids=[path])["ids"]) > 0:
+                    if deep_scan:
+                        # Check if the average pixel value has changed
+                        average = image_collection.get(ids=[path])["metadatas"][0][
+                            "average"
+                        ]
+                        if average != averages[paths.index(path)]:
+                            to_process.append(path)
+                else:
+                    to_process.append(path)
 
-        if to_process:
-            # Process CLIP embeddings in batch
-            batch_embeddings = get_clip_image(to_process)
+            if to_process:
+                # Process CLIP embeddings in batch
+                image_embeddings = get_clip_image(to_process)
 
-            # Prepare data for batch upsert
-            upsert_ids = to_process
-            upsert_embeddings = batch_embeddings
-            upsert_metadatas = [
-                {"average": averages[paths.index(path)]} for path in to_process
-            ]
+                # Prepare data for batch upsert
+                upsert_ids = to_process
+                upsert_embeddings = image_embeddings
+                upsert_metadatas = [
+                    {"average": averages[paths.index(path)]} for path in to_process
+                ]
 
-            # Perform batch upsert for image collection
-            image_collection.upsert(
-                ids=upsert_ids,
-                embeddings=upsert_embeddings,
-                metadatas=upsert_metadatas,
-            )
+                # Perform batch upsert for image collection
+                image_collection.upsert(
+                    ids=upsert_ids,
+                    embeddings=upsert_embeddings,
+                    metadatas=upsert_metadatas,
+                )
+                ocr_texts = apply_OCR(to_process)
 
-            # Process OCR and text embeddings individually
-            for path in to_process:
-                ocr_text = apply_OCR(path)
-                if ocr_text is not None:
-                    text_embeddings = get_text_embeddings(ocr_text)
-                    text_collection.upsert(ids=[path], embeddings=[text_embeddings])
+                # Process OCR and text embeddings individually
+                for ocr_text in ocr_texts:
+                    if ocr_text is not None:
+                        text_embeddings = get_text_embeddings(ocr_text)
+                        text_collection.upsert(ids=[path], embeddings=[text_embeddings])
+
+            pbar.update(min(batch_size, len(paths) - i))
 
 
 def clean_index(image_collection, text_collection):
