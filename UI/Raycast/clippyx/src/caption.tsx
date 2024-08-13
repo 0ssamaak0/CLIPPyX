@@ -1,5 +1,5 @@
 import { ActionPanel, Action, Grid, showToast, Toast } from "@raycast/api";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useFetch } from "@raycast/utils";
 import { exec } from "child_process";
 import { promisify } from "util";
@@ -13,6 +13,7 @@ interface Image {
 
 export default function Command() {
   const [searchText, setSearchText] = useState("");
+  const [debouncedSearchText, setDebouncedSearchText] = useState("");
   const [images, setImages] = useState<Image[]>([]);
 
   const { isLoading, data, revalidate } = useFetch("http://localhost:23107/clip_text", {
@@ -20,17 +21,35 @@ export default function Command() {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ query: searchText }),
+    body: JSON.stringify({ query: debouncedSearchText }),
   });
 
+  // Debounce function
+  const debounce = (func: (...args: any[]) => void, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
+
+  // Debounced search text setter (wait for 0.5s after user stops typing)
+  const debouncedSetSearchText = useCallback(
+    debounce((text: string) => setDebouncedSearchText(text), 500),
+    []
+  );
+
   useEffect(() => {
-    if (searchText.length === 0) {
+    debouncedSetSearchText(searchText);
+  }, [searchText]);
+
+  useEffect(() => {
+    if (debouncedSearchText.length === 0) {
       setImages([]);
       return;
     }
-
     revalidate();
-  }, [searchText]);
+  }, [debouncedSearchText]);
 
   useEffect(() => {
     if (data) {
@@ -44,8 +63,8 @@ export default function Command() {
 
   const openImage = async (path: string) => {
     try {
-      const command = process.platform === 'darwin' ? 'open' : 
-                      process.platform === 'win32' ? 'start' : 'xdg-open';
+      const command = process.platform === 'darwin' ? 'open' :
+        process.platform === 'win32' ? 'start' : 'xdg-open';
       await execAsync(`${command} "${path}"`);
     } catch (error) {
       console.error("Error opening image:", error);
@@ -59,8 +78,8 @@ export default function Command() {
 
   const revealImageInFinder = async (path: string) => {
     try {
-      const command = process.platform === 'darwin' ? `open -R "${path}"` : 
-                      process.platform === 'win32' ? `explorer /select,"${path}"` : `xdg-open "${path}"`;
+      const command = process.platform === 'darwin' ? `open -R "${path}"` :
+        process.platform === 'win32' ? `explorer /select,"${path}"` : `xdg-open "${path}"`;
       await execAsync(command);
     } catch (error) {
       console.error("Error opening image location:", error);
