@@ -1,43 +1,17 @@
-# Specify the server operating system
-# server_os = ["windows" or "wsl"]
-server_os: windows
-
-# Directories settings: Select directories to include / exclude for indexing
-scan_method: default # default by scanning all files
-# scan_method: Everything # using Everything SDK (Windows only & Required to install Everything)
-    
-include_directories:
-    # - path/to/folder1
-    # - path/to/folder2
-
-exclude_directories:
-    # - path/to/folder1
-    # - path/to/folder2
-
-deep_scan: true # handles files with same names
-batch_size: 32 # batch size for indexing
-
-# CLIP for Image and search query embedding
+batch_size: 32
 clip:
-    # provider = ["transformers" or "mobileclip"]
-    provider: mobileclip
-
-    # if using "mobileclip"
-    # Check https://github.com/apple/ml-mobileclip/tree/main?tab=readme-ov-file#evaluation
-    mobileclip_checkpoint: mobileclip_s0
-
-    # if using "transformers"
-    # Check https://huggingface.co/models?other=clip,endpoints_compatible&sort=trending or any compatible model
-    transformers_clip_checkpoint: openai/clip-vit-base-patch16
-
-# Text embedding model for OCR and search query embedding
+  HF_transformers_clip: openai/clip-vit-base-patch16
+  mobileclip_checkpoint: mobileclip_s0
+  provider: mobileclip
+deep_scan: true
+exclude_directories: []
+include_directories: []
+scan_method: default
 text_embed:
-    # provider = ["transformers" , "ollama", "llama_cpp"]
-    provider: ollama
-    
-    # if using "llama_cpp"
-    # Check https://huggingface.co/nomic-ai/nomic-embed-text-v1.5-GGUF/tree/main
-    quantization_method: Q4_0
-
-    # if using "transformers"
-    # Check https://huggingface.co/nomic-ai/nomic-embed-text-v1.5 or any compatible model and change tokenizer and model name in text_embeddings/transformers_embeddings.py
+  HF_transformers_embeddings: nomic-ai/nomic-embed-text-v1.5
+  embedding_gguf: <path_to_gguf_model>
+  ollama_embeddings: 0ssamaak0/nomic-embed-text
+  openai_api_key: <openai_api_key>
+  openai_endpoint: https://api.openai.com/v1
+  openai_model: text-embedding-ada-002
+  provider: ollama
