@@ -1,6 +1,11 @@
 from flask import Flask, abort, request, jsonify, send_from_directory
 from flask_cors import CORS
-from Index.create_db import create_vectordb, get_clip_image, get_clip_text
+from Index.create_db import (
+    create_vectordb,
+    get_clip_image,
+    get_clip_text,
+    get_text_embeddings,
+)
 
 import os
 import requests
@@ -9,7 +14,7 @@ from io import BytesIO
 image_collection, text_collection = create_vectordb("db")
 
 
-def parse_image(image_path):
+def parse_image(image_path, top_k=5, threshold=0):
     """
     Parses an image from a given path or URL.
 
@@ -32,7 +37,7 @@ def parse_image(image_path):
         return image_path
 
 
-def search_clip_text(text, image_collection):
+def search_clip_text(text, image_collection, top_k=5, threshold=0):
     """
     Search for images that are semantically similar to the input text.
 
@@ -45,12 +50,16 @@ def search_clip_text(text, image_collection):
     """
     text_embedding = get_clip_text(text)
     results = image_collection.query(text_embedding, n_results=5)
-    distances = results["distances"][0]
-    paths = results["ids"][0]
-    return paths, distances
+    similarities = [1 - d for d in results["distances"][0]]
+    paths, similarities = [
+        p for p, d in zip(results["ids"][0], similarities) if d > threshold
+    ], [d for d in similarities if d > threshold]
+    return paths, similarities
 
 
-def search_clip_image(image_path, image_collection, get_self=False):
+def search_clip_image(
+    image_path, image_collection, top_k=5, threshold=0, get_self=False
+):
     """
     Search for images that are visually similar to the input image within a given image collection.
 
@@ -66,17 +75,20 @@ def search_clip_image(image_path, image_collection, get_self=False):
     #     image_path = image_path.replace("\\", "/").replace("C:", "/mnt/c")
     image_embedding = get_clip_image([image_path])
     results = image_collection.query(image_embedding, n_results=5)
-    distances = results["distances"][0]
-    paths = results["ids"][0]
-    for i in range(len(paths)):
-        if paths[i] == image_path:
-            paths.pop(i)
-            distances.pop(i)
-            break
-    return paths, distances
+    similarities = [1 - d for d in results["distances"][0]]
+    paths, similarities = [
+        p for p, d in zip(results["ids"][0], similarities) if d > threshold
+    ], [d for d in similarities if d > threshold]
+    if not get_self:
+        for i in range(len(paths)):
+            if paths[i] == image_path:
+                paths.pop(i)
+                similarities.pop(i)
+                break
+    return paths, similarities
 
 
-def search_embed_text(text, text_collection):
+def search_embed_text(text, text_collection, top_k=5, threshold=0):
     """
     Search for texts that are semantically similar to the input text.
 
@@ -89,9 +101,11 @@ def search_embed_text(text, text_collection):
     """
     text_embedding = get_text_embeddings(text)
     results = text_collection.query(text_embedding, n_results=5)
-    distances = results["distances"][0]
-    paths = results["ids"][0]
-    return paths, distances
+    similarities = [1 - d for d in results["distances"][0]]
+    paths, similarities = [
+        p for p, d in zip(results["ids"][0], similarities) if d > threshold
+    ], [d for d in similarities if d > threshold]
+    return paths, similarities
 
 
 # Flask App
