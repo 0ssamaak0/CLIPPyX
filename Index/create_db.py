@@ -115,7 +115,9 @@ def index_images(image_collection, text_collection):
                 for ocr_text in ocr_texts:
                     if ocr_text is not None:
                         text_embeddings = get_text_embeddings(ocr_text)
-                        text_collection.upsert(ids=[path], embeddings=[text_embeddings])
+                        text_collection.upsert(
+                            ids=[ocr_text], embeddings=[text_embeddings]
+                        )
 
             pbar.update(min(batch_size, len(paths) - i))
 
