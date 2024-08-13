@@ -1,6 +1,12 @@
 import torch
 from transformers import AutoTokenizer, AutoModel
 import torch.nn.functional as F
+import yaml
+
+# Load the configuration file
+with open("config.yaml", "r") as f:
+    config = yaml.safe_load(f)
+checkpoint = config["clip"]["HF_transformers_embeddings"]
 
 
 def mean_pooling(model_output, attention_mask):
@@ -14,13 +20,12 @@ def mean_pooling(model_output, attention_mask):
 
 
 tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
-model = AutoModel.from_pretrained(
-    "nomic-ai/nomic-embed-text-v1.5", trust_remote_code=True
-)
+model = AutoModel.from_pretrained(checkpoint, trust_remote_code=True)
 model.eval()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = model.to(device)
+
 
 def get_text_embeddings(text, norm=False):
     """

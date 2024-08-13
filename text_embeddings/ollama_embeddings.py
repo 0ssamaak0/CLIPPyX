@@ -1,5 +1,11 @@
 import requests
 import json
+import yaml
+
+# Load the configuration file
+with open("config.yaml", "r") as f:
+    config = yaml.safe_load(stream=f)
+model = config["text_embed"]["ollama_embeddings"]
 
 
 def get_text_embeddings(text):
@@ -14,7 +20,7 @@ def get_text_embeddings(text):
     """
     try:
         url = "http://localhost:11434/api/embeddings"
-        data = {"model": "0ssamaak0/nomic-embed-text", "prompt": text}
+        data = {"model": model, "prompt": text}
         response = requests.post(url, data=json.dumps(data))
     except:
         raise Exception(
