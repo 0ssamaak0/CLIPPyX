@@ -1,7 +1,25 @@
 from Index.scan_default import fast_scan_for_images
+from concurrent.futures import ThreadPoolExecutor
 import yaml, csv
 from tqdm import tqdm
 from PIL import Image
+
+
+def process_image(path):
+    try:
+        with Image.open(path) as img:
+            try:
+                first_channel = img.split()[0]
+                pixel_data = list(first_channel.getdata())
+            except AttributeError:
+                pixel_data = list(img.getdata())
+            total = sum(pixel_data)
+            num_pixels = len(pixel_data)
+            average = int(total / num_pixels)
+        return (path, average)
+    except Exception as e:
+        print(f"Error processing {path}: {e}")
+        return (path, 0)
 
 
 def save_to_csv(image_paths, filename="paths.csv", save_average=False):
@@ -19,23 +37,20 @@ def save_to_csv(image_paths, filename="paths.csv", save_average=False):
             writer.writerow(["path", "average"])
         else:
             writer.writerow(["path", "average"])
-        for path in tqdm(image_paths):
-            if save_average:
-                try:
-                    with Image.open(path) as img:
-                        try:
-                            first_channel = img.split()[0]
-                            pixel_data = list(first_channel.getdata())
-                        except AttributeError:
-                            pixel_data = list(img.getdata())
-                        total = sum(pixel_data)
-                        num_pixels = len(pixel_data)
-                        average = int(total / num_pixels)
-                    writer.writerow([path, average])
-                except Exception as e:
-                    print(f"Error processing {path}: {e}")
-            else:
+
+        if save_average:
+            with ThreadPoolExecutor() as executor:
+                results = list(
+                    tqdm(
+                        executor.map(process_image, image_paths), total=len(image_paths)
+                    )
+                )
+            for result in results:
+                writer.writerow(result)
+        else:
+            for path in tqdm(image_paths):
                 writer.writerow([path, 0])
+
     print(f"Image paths{' and averages' if save_average else ''} saved to {filename}")
 
 
