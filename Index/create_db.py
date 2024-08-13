@@ -112,17 +112,17 @@ def index_images(image_collection, text_collection):
                 ocr_texts = apply_OCR(to_process)
 
                 # Process OCR and text embeddings individually
-                for ocr_text in ocr_texts:
-                    if ocr_text is not None:
-                        text_embeddings = get_text_embeddings(ocr_text)
+                for i in range(len(to_process)):
+                    if ocr_texts[i] is not None:
+                        text_embeddings = get_text_embeddings(ocr_texts[i])
                         text_collection.upsert(
-                            ids=[ocr_text], embeddings=[text_embeddings]
+                            ids=[to_process[i]], embeddings=[text_embeddings]
                         )
 
             pbar.update(min(batch_size, len(paths) - i))
 
 
-def clean_index(image_collection, text_collection):
+def clean_index(image_collection, text_collection, verbose=False):
     """
     Clean up the database.
 
@@ -142,10 +142,12 @@ def clean_index(image_collection, text_collection):
         desc="Cleaning up database",
     ):
         if id not in paths:
-            print(f"deleting: {id} from image_collection")
+            if verbose:
+                print(f"deleting: {id} from image_collection")
             image_collection.delete(ids=[id])
             try:
-                print(f"deleting: {id} from text_collection")
+                if verbose:
+                    print(f"deleting: {id} from text_collection")
                 text_collection.delete(ids=[id])
             except:
                 pass
