@@ -1,8 +1,18 @@
 import setuptools
 from os import path
+import pkg_resources
+
+# Check if torch or torchvision is already installed
+installed_packages = {pkg.key for pkg in pkg_resources.working_set}
+skip_packages = {"torch", "torchvision"}
 
 with open("requirements.txt", "r") as f:
-    requirements = f.read().splitlines()
+    requirements = []
+    for line in f:
+        # Split on semicolon to handle any environment markers
+        package = line.split(";")[0].strip()
+        if package.split("==")[0].lower() not in skip_packages:
+            requirements.append(line)
 
 here = path.abspath(path.dirname(__file__))
 
