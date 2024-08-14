@@ -1,4 +1,4 @@
-import { ActionPanel, Action, Grid, showToast, Toast } from "@raycast/api";
+import { ActionPanel, Action, Grid, showToast, Toast, getPreferenceValues} from "@raycast/api";
 import { useState, useEffect, useCallback } from "react";
 import { useFetch } from "@raycast/utils";
 import { exec } from "child_process";
@@ -11,17 +11,27 @@ interface Image {
   path: string;
 }
 
+interface Preferences {
+  threshold: number;
+  topK: number;
+}
+
 export default function Command() {
   const [searchText, setSearchText] = useState("");
   const [debouncedSearchText, setDebouncedSearchText] = useState("");
   const [images, setImages] = useState<Image[]>([]);
+  const preferences = getPreferenceValues<Preferences>();
 
   const { isLoading, data, revalidate } = useFetch("http://localhost:23107/clip_image", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ query: debouncedSearchText }),
+    body: JSON.stringify({ 
+      query: debouncedSearchText,
+      threshold: preferences.threshold,
+      top_k: preferences.topK
+    }),
   });
 
   // Debounce function

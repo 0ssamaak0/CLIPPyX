@@ -49,7 +49,7 @@ def search_clip_text(text, image_collection, top_k=5, threshold=0):
         tuple: A tuple containing the paths of the top 5 images and their distances from the input text.
     """
     text_embedding = get_clip_text(text)
-    results = image_collection.query(text_embedding, n_results=5)
+    results = image_collection.query(text_embedding, n_results=top_k)
     similarities = [1 - d for d in results["distances"][0]]
     paths, similarities = [
         p for p, d in zip(results["ids"][0], similarities) if d > threshold
@@ -74,7 +74,7 @@ def search_clip_image(
     # if os.name == "posix":
     #     image_path = image_path.replace("\\", "/").replace("C:", "/mnt/c")
     image_embedding = get_clip_image([image_path])
-    results = image_collection.query(image_embedding, n_results=5)
+    results = image_collection.query(image_embedding, n_results=top_k)
     similarities = [1 - d for d in results["distances"][0]]
     paths, similarities = [
         p for p, d in zip(results["ids"][0], similarities) if d > threshold
@@ -100,7 +100,7 @@ def search_embed_text(text, text_collection, top_k=5, threshold=0):
         tuple: A tuple containing the paths of the top 5 texts and their distances from the input text.
     """
     text_embedding = get_text_embeddings(text)
-    results = text_collection.query(text_embedding, n_results=5)
+    results = text_collection.query(text_embedding, n_results=top_k)
     similarities = [1 - d for d in results["distances"][0]]
     paths, similarities = [
         p for p, d in zip(results["ids"][0], similarities) if d > threshold
@@ -116,7 +116,11 @@ CORS(app)
 @app.route("/clip_text", methods=["POST"])
 def clip_text_route():
     query = request.json.get("query", "")
-    paths, distances = search_clip_text(query, image_collection)
+    threshold = float(request.json.get("threshold", 0))
+    top_k = int(request.json.get("top_k", -1))
+    print(f"threshold: {threshold} top_k: {top_k}")
+    paths, distances = search_clip_text(query, image_collection, top_k, threshold)
+    print(len(paths))
     # for path, distance in zip(paths, distances):
     #     print(f"Path: {path}, Distance: {distance}")
     return jsonify(paths)
@@ -125,8 +129,10 @@ def clip_text_route():
 @app.route("/clip_image", methods=["POST"])
 def clip_image_route():
     query = request.json.get("query", "")
+    threshold = float(request.json.get("threshold", 0))
+    top_k = int(request.json.get("top_k", -1))
     query = parse_image(query)
-    paths, distances = search_clip_image(query, image_collection)
+    paths, distances = search_clip_image(query, image_collection, top_k, threshold)
     # for path, distance in zip(paths, distances):
     #     print(f"Path: {path}, Distance: {distance}")
     return jsonify(paths)
@@ -135,7 +141,9 @@ def clip_image_route():
 @app.route("/ebmed_text", methods=["POST"])
 def ebmed_text_route():
     query = request.json.get("query", "")
-    paths, distances = search_embed_text(query, text_collection)
+    threshold = float(request.json.get("threshold", 0))
+    top_k = int(request.json.get("top_k", -1))
+    paths, distances = search_embed_text(query, text_collection, top_k, threshold)
     # for path, distance in zip(paths, distances):
     #     print(f"Path: {path}, Distance: {distance}")
     return jsonify(paths)

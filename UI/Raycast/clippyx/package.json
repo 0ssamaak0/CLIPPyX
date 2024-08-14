@@ -12,21 +12,81 @@
   "commands": [
     {
       "name": "caption",
-      "title": "Search by Caption",
-      "description": "Search images using CLIP",
-      "mode": "view"
+      "title": "Caption Search",
+      "description": "Search images by caption",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "threshold",
+          "type": "textfield",
+          "required": true,
+          "title": "Threshold",
+          "description": "Float value between 0 and 1",
+          "placeholder": "0.2",
+          "default": "0.2"
+        },
+        {
+          "name": "topK",
+          "type": "textfield",
+          "required": true,
+          "title": "Top K",
+          "description": "Integer value from 1 to 99",
+          "placeholder": "5",
+          "default": "5"
+        }
+      ]
     },
     {
       "name": "text",
-      "title": "Search by text",
-      "description": "Generate a caption for an image using CLIP",
-      "mode": "view"
+      "title": "Text content search",
+      "description": "Serch images by text content",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "threshold",
+          "type": "textfield",
+          "required": true,
+          "title": "Threshold",
+          "description": "Float value between 0 and 1",
+          "placeholder": "0.2",
+          "default": "0.2"
+        },
+        {
+          "name": "topK",
+          "type": "textfield",
+          "required": true,
+          "title": "Top K",
+          "description": "Integer value from 1 to 99",
+          "placeholder": "5",
+          "default": "5"
+        }
+      ]
     },
     {
       "name": "similar",
-      "title": "Search by similar image",
-      "description": "Generate a caption for an image using CLIP",
-      "mode": "view"
+      "title": "Similar Image Search",
+      "description": "Enter path / URL of image to search for similar images",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "threshold",
+          "type": "textfield",
+          "required": true,
+          "title": "Threshold",
+          "description": "Float value between 0 and 1",
+          "placeholder": "0.2",
+          "default": "0.2"
+        },
+        {
+          "name": "topK",
+          "type": "textfield",
+          "required": true,
+          "title": "Top K",
+          "description": "Integer value from 1 to 99",
+          "placeholder": "5",
+          "default": "5"
+        }
+      ]
     }
   ],
   "dependencies": {
