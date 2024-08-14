@@ -18,12 +18,18 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/0ssamaak0/CLIPPyX",
-    python_requires='>=3.10',
+    python_requires=">=3.11",
     install_requires=requirements,
-    packages=setuptools.find_packages(exclude=["db", "checkpoints", "Everything-SDK", "images", "ml-mobileclip", "CLIPPyX.egg-info/"]),
-    entry_points={
-        "console_scripts": [
-            "CLIPPyX=main"
+    packages=setuptools.find_packages(
+        exclude=[
+            "db",
+            "checkpoints",
+            "Everything-SDK",
+            "images",
+            "ml-mobileclip",
+            "CLIPPyX.egg-info/",
         ]
-    }
+    ),
+    entry_points={"console_scripts": ["CLIPPyX=main"]},
 )
+# pip install git+https://github.com/apple/ml-mobileclip.git@main#egg=mobileclip --no-deps
