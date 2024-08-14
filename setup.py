@@ -1,6 +1,4 @@
 import setuptools
-import subprocess
-import platform
 from os import path
 
 with open("requirements.txt", "r") as f:
@@ -10,25 +8,6 @@ here = path.abspath(path.dirname(__file__))
 
 with open(path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
-
-try:
-    import torch
-    import torchvision
-except ImportError:
-    # check if platform isn't darwn
-    if platform.system() != "Darwin":
-        subprocess.run(["pip", "install", "torch", "torchvision"])
-    else:
-        subprocess.run(
-            [
-                "pip",
-                "install",
-                "torch",
-                "torchvision",
-                "--index-url https://download.pytorch.org/whl/cu118",
-            ]
-        )
-
 
 setuptools.setup(
     name="CLIPPyX",
