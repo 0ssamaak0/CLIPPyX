@@ -7,13 +7,17 @@ import yaml
 # Load the configuration file
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
-checkpoint = config["clip"]["transformers_clip_checkpoint"]
+checkpoint = config["clip"]["HF_transformers_clip"]
 
 # load model and tokenizer
 model = CLIPModel.from_pretrained(checkpoint)
 processor = CLIPProcessor.from_pretrained(checkpoint)
 # move model to cuda if available
-device = "cuda" if torch.cuda.is_available() else "cpu"
+device = (
+    "mps"
+    if torch.backends.mps.is_available()
+    else ("cuda" if torch.cuda.is_available() else "cpu")
+)
 model.to(device)
 
 

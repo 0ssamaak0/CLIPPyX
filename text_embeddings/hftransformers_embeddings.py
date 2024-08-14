@@ -23,7 +23,11 @@ tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 model = AutoModel.from_pretrained(checkpoint, trust_remote_code=True)
 model.eval()
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = (
+    "mps"
+    if torch.backends.mps.is_available()
+    else ("cuda" if torch.cuda.is_available() else "cpu")
+)
 model = model.to(device)
 
 

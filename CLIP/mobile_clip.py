@@ -56,7 +56,11 @@ model, _, preprocess = mobileclip.create_model_and_transforms(
 )
 tokenizer = mobileclip.get_tokenizer(checkpoint)
 # move model to cuda if available
-device = "cuda" if torch.cuda.is_available() else "cpu"
+device = (
+    "mps"
+    if torch.backends.mps.is_available()
+    else ("cuda" if torch.cuda.is_available() else "cpu")
+)
 
 model.to(device)
 
@@ -87,7 +91,6 @@ def get_clip_image(image_paths):
     Returns:
         list: A list containing the image embeddings for each image in the batch.
     """
-
     # Use ThreadPoolExecutor to preprocess images in parallel
     with ThreadPoolExecutor() as executor:
         preprocessed_images = list(executor.map(preprocess_image, image_paths))
