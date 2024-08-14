@@ -19,7 +19,7 @@ class CLIPPyXSettings:
         theme_dict = {"Light": "lumen", "Dark": "darkly"}
         self.root = ttk.Window(themename=theme_dict[theme])
         self.root.title("CLIPPyX Settings")
-        self.root.minsize(840, 720)
+        self.root.minsize(840, 860)
         self.root.iconphoto(False, tk.PhotoImage(file="assets/icon.png"))
 
         self.create_main_frame()

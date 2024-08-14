@@ -1,36 +1,34 @@
 import setuptools
+import subprocess
+import platform
 from os import path
 
-
 with open("requirements.txt", "r") as f:
-    requirements = []
-    for line in f:
-        # Split on semicolon to handle any environment markers
-        package = line.split(";")[0].strip()
-        if package.split("==")[0].lower() == "torch":
-            try:
-                import torch
-
-                print(f"torch already installed: {torch.__version__}")
-            except ImportError:
-                print("torch not installed")
-                requirements.append(package)
-        elif package.split("==")[0].lower() == "torchvision":
-            try:
-                import torchvision
-
-                print(f"torchvision already installed: {torchvision.__version__}")
-            except ImportError:
-                print("torchvision not installed")
-                requirements.append(package)
-        else:
-            requirements.append(package)
-
+    requirements = f.read().splitlines()
 
 here = path.abspath(path.dirname(__file__))
 
 with open(path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
+
+try:
+    import torch
+    import torchvision
+except ImportError:
+    # check if platform isn't darwn
+    if platform.system() != "Darwin":
+        subprocess.run(["pip", "install", "torch", "torchvision"])
+    else:
+        subprocess.run(
+            [
+                "pip",
+                "install",
+                "torch",
+                "torchvision",
+                "--index-url https://download.pytorch.org/whl/cu118",
+            ]
+        )
+
 
 setuptools.setup(
     name="CLIPPyX",
