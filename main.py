@@ -15,7 +15,7 @@ parser.add_argument("--open-config-file", action="store_true", help="open config
 args = parser.parse_args()
 
 if args.settings:
-    subprocess.run(["python3", "settings.py"])
+    subprocess.run(["python", "settings.py"])
     exit()
 
 if args.delete_index:

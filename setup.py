@@ -1,18 +1,31 @@
 import setuptools
 from os import path
-import pkg_resources
 
-# Check if torch or torchvision is already installed
-installed_packages = {pkg.key for pkg in pkg_resources.working_set}
-skip_packages = {"torch", "torchvision"}
 
 with open("requirements.txt", "r") as f:
     requirements = []
     for line in f:
         # Split on semicolon to handle any environment markers
         package = line.split(";")[0].strip()
-        if package.split("==")[0].lower() not in skip_packages:
-            requirements.append(line)
+        if package.split("==")[0].lower() == "torch":
+            try:
+                import torch
+
+                print(f"torch already installed: {torch.__version__}")
+            except ImportError:
+                print("torch not installed")
+                requirements.append(package)
+        elif package.split("==")[0].lower() == "torchvision":
+            try:
+                import torchvision
+
+                print(f"torchvision already installed: {torchvision.__version__}")
+            except ImportError:
+                print("torchvision not installed")
+                requirements.append(package)
+        else:
+            requirements.append(package)
+
 
 here = path.abspath(path.dirname(__file__))
 
@@ -28,7 +41,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/0ssamaak0/CLIPPyX",
-    python_requires=">=3.11",
+    python_requires=">=3.10",
     install_requires=requirements,
     packages=setuptools.find_packages(
         exclude=[
