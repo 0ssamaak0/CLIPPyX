@@ -11,7 +11,7 @@ parser.add_argument(
     "--delete-index", action="store_true", help="delete the index (Vector database)"
 )
 parser.add_argument("--get-index", action="store_true", help="get the index path")
-parser.add_argument("--open-config", action="store_true", help="open config.yaml")
+parser.add_argument("--open-config-file", action="store_true", help="open config.yaml")
 args = parser.parse_args()
 
 if args.settings:
@@ -33,7 +33,7 @@ if args.get_index:
         print("Index does not exist")
     exit()
 
-if args.open_config:
+if args.open_config_file:
     if platform.system() == "Windows":
         os.system("start config.yaml")
     elif platform.system() == "Darwin":
