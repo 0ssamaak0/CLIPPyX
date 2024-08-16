@@ -98,7 +98,7 @@ def get_clip_image(image_paths):
     images_tensor = torch.stack(preprocessed_images).to(device)
 
     # Encode the batch of images
-    with torch.no_grad(), torch.amp.autocast("cpu"):
+    with torch.no_grad():
         image_features_batch = model.encode_image(images_tensor)
 
     # Convert the batch of image features to a list of lists
@@ -118,6 +118,6 @@ def get_clip_text(text):
         list: The text embeddings as a list.
     """
     text = tokenizer([text]).to(device)
-    with torch.no_grad(), torch.amp.autocast("cpu"):
+    with torch.no_grad():
         text_features = model.encode_text(text)
     return text_features.cpu().squeeze(0).numpy().tolist()
