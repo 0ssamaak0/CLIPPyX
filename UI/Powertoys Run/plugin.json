@@ -1,0 +1,14 @@
+{
+    "ID": "AE953C974C2241878F282EA18A7769E4",
+    "ActionKeyword": "cx",
+    "IsGlobal": false,
+    "Name": "CLIPPyX",
+    "Author": "Usama Ahmed-Andrew Ayman",
+    "Version": "1.0.0",
+    "Language": "csharp",
+    "Website": "https://github.com/0ssamaak0/CLIPPyX",
+    "ExecuteFileName": "Community.PowerToys.Run.Plugin.CLIPPyX.dll",
+    "IcoPathDark": "Images\\icon.png",
+    "IcoPathLight": "Images\\icon.png",
+    "DynamicLoading": false 
+}
