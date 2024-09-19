@@ -32,4 +32,3 @@ setuptools.setup(
     ),
     entry_points={"console_scripts": ["CLIPPyX=main"]},
 )
-# pip install git+https://github.com/apple/ml-mobileclip.git@main#egg=mobileclip --no-deps

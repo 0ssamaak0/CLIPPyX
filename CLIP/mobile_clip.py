@@ -3,10 +3,25 @@ from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
 import torch
 from PIL import Image
-import mobileclip
 import os
 import yaml
 import warnings
+
+try:
+    import mobileclip
+except ImportError:
+    import subprocess
+
+    subprocess.run(
+        [
+            "pip",
+            "install",
+            "git+https://github.com/apple/ml-mobileclip.git@main#egg=mobileclip",
+            "--no-deps",
+        ]
+    )
+    import mobileclip
+
 
 warnings.filterwarnings("ignore")
 
