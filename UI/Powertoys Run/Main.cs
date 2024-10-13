@@ -54,7 +54,7 @@ namespace Community.PowerToys.Run.Plugin.CLIPPyX
         /// <summary>
         /// Description of the plugin.
         /// </summary>
-        public string Description => "powerful system-wide image search and management tool that offers versatile search options to find images based on their content, text, and visual similarity. With its advanced features, you can effortlessly locate the desired images across your entire computer's disk(s), regardless of their location or file names.\r\n\r\n";
+        public string Description => "CLIPPyX provides an OS-wide image search that supports semantic search in both image content and text on images";
 
 
         public static List<string> GetEmbedText(string query)
