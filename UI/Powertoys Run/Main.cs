@@ -108,7 +108,7 @@ namespace Community.PowerToys.Run.Plugin.CLIPPyX
             {
                 Key = nameof(ThresholdClipText),
                 DisplayLabel = "Threshold for Clip Text",
-                DisplayDescription = "Double: Threshold for the similarity search.(e.g 0.5) from 0->1",
+                DisplayDescription = "Double: Threshold for the similarity search.",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
                 NumberValue=ThresholdClipText,
                 NumberBoxMin=0,
@@ -117,8 +117,8 @@ namespace Community.PowerToys.Run.Plugin.CLIPPyX
             new()
             {
                 Key = nameof(TopKClipText),
-                DisplayLabel = "Top K for Clip Text",
-                DisplayDescription = "Integer: Number of top searches. (e.g 3)",
+                DisplayLabel = "Max number of results for Clip Text",
+                DisplayDescription = "Integer: Max number of results",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
                 NumberValue=TopKClipText,
                 NumberBoxMin=1,
@@ -127,7 +127,7 @@ namespace Community.PowerToys.Run.Plugin.CLIPPyX
             {
                 Key = nameof(ThresholdClipImage),
                 DisplayLabel = "Threshold for Clip Image",
-                DisplayDescription = "Double: Threshold for the similarity search.(e.g 0.5) from 0->1",
+                DisplayDescription = "Double: Threshold for the similarity search.",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
                 NumberValue=ThresholdClipImage,
                 NumberBoxMin=0,
@@ -136,8 +136,8 @@ namespace Community.PowerToys.Run.Plugin.CLIPPyX
             new()
             {
                 Key = nameof(TopKClipImage),
-                DisplayLabel = "Top K for Clip Image",
-                DisplayDescription = "Integer: Number of top searches. (e.g 3)",
+                DisplayLabel = "Max number of results for Clip Image",
+                DisplayDescription = "Integer: Max number of results",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
                 NumberValue=TopKClipImage,
                 NumberBoxMin=1,
@@ -146,7 +146,7 @@ namespace Community.PowerToys.Run.Plugin.CLIPPyX
             {
                 Key = nameof(ThresholdEmbedText),
                 DisplayLabel = "Threshold for Embed Text",
-                DisplayDescription = "Double: Threshold for the similarity search.(e.g 0.5) from 0->1",
+                DisplayDescription = "Double: Threshold for the similarity search.",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
                 NumberValue=ThresholdEmbedText,
                 NumberBoxMin=0,
@@ -155,8 +155,8 @@ namespace Community.PowerToys.Run.Plugin.CLIPPyX
             new()
             {
                 Key = nameof(TopKEmbedText),
-                DisplayLabel = "Top K for Embed Text",
-                DisplayDescription = "Integer: Number of top searches. (e.g 3)",
+                DisplayLabel = "Max number of results for Embed Text",
+                DisplayDescription = "Integer: Max number of results",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
                 NumberValue=TopKEmbedText,
                 NumberBoxMin=1,
