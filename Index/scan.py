@@ -33,10 +33,8 @@ def save_to_csv(image_paths, filename="paths.csv", save_average=False):
     """
     with open(filename, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
-        if save_average:
-            writer.writerow(["path", "average"])
-        else:
-            writer.writerow(["path", "average"])
+        writer.writerow(["path", "average"])
+        image_paths = list(set(image_paths))
 
         if save_average:
             with ThreadPoolExecutor() as executor:
