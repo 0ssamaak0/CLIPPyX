@@ -34,6 +34,8 @@ def save_to_csv(image_paths, filename="paths.csv", save_average=False):
     with open(filename, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["path", "average"])
+        # Handle backslashes in Windows paths
+        image_paths = [path.replace("\\", "/") for path in image_paths]
         image_paths = list(set(image_paths))
 
         if save_average:

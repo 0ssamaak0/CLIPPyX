@@ -117,7 +117,7 @@ CORS(app)
 def clip_text_route():
     query = request.json.get("query", "")
     threshold = float(request.json.get("threshold", 0))
-    top_k = int(request.json.get("top_k", -1))
+    top_k = int(request.json.get("top_k", 5))
     print(f"threshold: {threshold} top_k: {top_k}")
     paths, distances = search_clip_text(query, image_collection, top_k, threshold)
     print(len(paths))
@@ -130,7 +130,7 @@ def clip_text_route():
 def clip_image_route():
     query = request.json.get("query", "")
     threshold = float(request.json.get("threshold", 0))
-    top_k = int(request.json.get("top_k", -1))
+    top_k = int(request.json.get("top_k", 5))
     query = parse_image(query)
     paths, distances = search_clip_image(query, image_collection, top_k, threshold)
     # for path, distance in zip(paths, distances):
@@ -142,7 +142,7 @@ def clip_image_route():
 def ebmed_text_route():
     query = request.json.get("query", "")
     threshold = float(request.json.get("threshold", 0))
-    top_k = int(request.json.get("top_k", -1))
+    top_k = int(request.json.get("top_k", 5))
     paths, distances = search_embed_text(query, text_collection, top_k, threshold)
     # for path, distance in zip(paths, distances):
     #     print(f"Path: {path}, Distance: {distance}")
