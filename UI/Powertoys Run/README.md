@@ -28,7 +28,7 @@ to use CLIPPyX plugin, type `cx` in the bar
 
 - **Search by Textual Content in Images**: after `cx` write `|` then enter your query
 
-- **Search by Image Similarity**: after `cx` write `#` then enter the path of your image 
+- **Search by Image Similarity**: after `cx` write `#` then enter the path of your image (local path or url)
 
 # Resources
 - [Creating custom PowerToys Run plugins

@@ -20,4 +20,4 @@ to trigger CLIPPyX plugin, type `cx` in the bar
 
 - **Search by Textual Content in Images**: after `cx` write `|` then enter your query
 
-- **Search by Image Similarity**: after `cx` write `#` then enter the path of your image (you can select the image and press `Win + Shift + C` to get the path)
+- **Search by Image Similarity**: after `cx` write `#` then enter the path of your image (local path or url)
