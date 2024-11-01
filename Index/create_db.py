@@ -1,6 +1,9 @@
 import chromadb
 from tqdm import tqdm
 import os
+import base64
+import cohere
+import time
 import sys
 import yaml
 from Index.scan import read_from_csv
@@ -14,21 +17,61 @@ with open("config.yaml", "r") as f:
 
 deep_scan = config["deep_scan"]
 batch_size = config["batch_size"]
+co = cohere.ClientV2(api_key=config["text_embed"]["openai_api_key"])
 
-if config["clip"]["provider"] == "HF_transformers":
-    from CLIP.hftransformers_clip import get_clip_image, get_clip_text
-elif config["clip"]["provider"] == "mobileclip":
-    from CLIP.mobile_clip import get_clip_image, get_clip_text
 
-if config["text_embed"]["provider"] == "HF_transformers":
-    from text_embeddings.hftransformers_embeddings import get_text_embeddings
-elif config["text_embed"]["provider"] == "ollama":
-    from text_embeddings.ollama_embeddings import get_text_embeddings
-elif config["text_embed"]["provider"] == "llama_cpp":
-    from text_embeddings.llamacpp_embeddings import get_text_embeddings
-elif config["text_embed"]["provider"] == "openai_api":
-    from text_embeddings.openai_api import get_text_embeddings
-from ocr_model.OCR import apply_OCR
+def get_clip_image(image_paths):
+    embeddings = []
+    for image in image_paths:
+        try:
+            processed_image = image_to_base64_data_url(image)
+            embeddings.append(
+                co.embed(
+                    model="embed-english-v3.0",
+                    images=[processed_image],
+                    input_type="image",
+                    embedding_types=["float"],
+                ).embeddings.float_[0]
+            )
+        except:
+            print(image)
+    return embeddings
+
+
+def get_clip_text(text):
+    embeddings = co.embed(
+        model="embed-english-v3.0",
+        texts=[text],
+        input_type="search_query",
+        embedding_types=["float"],
+    ).embeddings.float_[0]
+    return embeddings
+
+
+# if config["clip"]["provider"] == "HF_transformers":
+#     from CLIP.hftransformers_clip import get_clip_image, get_clip_text
+# elif config["clip"]["provider"] == "mobileclip":
+#     from CLIP.mobile_clip import get_clip_image, get_clip_text
+
+# if config["text_embed"]["provider"] == "HF_transformers":
+#     from text_embeddings.hftransformers_embeddings import get_text_embeddings
+# elif config["text_embed"]["provider"] == "ollama":
+#     from text_embeddings.ollama_embeddings import get_text_embeddings
+# elif config["text_embed"]["provider"] == "llama_cpp":
+#     from text_embeddings.llamacpp_embeddings import get_text_embeddings
+# elif config["text_embed"]["provider"] == "openai_api":
+#     from text_embeddings.openai_api import get_text_embeddings
+# from ocr_model.OCR import apply_OCR
+
+
+def image_to_base64_data_url(image_path):
+    _, file_extension = os.path.splitext(image_path)
+    file_type = file_extension[1:]
+
+    with open(image_path, "rb") as f:
+        enc_img = base64.b64encode(f.read()).decode("utf-8")
+        enc_img = f"data:image/{file_type};base64,{enc_img}"
+    return enc_img
 
 
 def create_vectordb(path):
@@ -111,15 +154,6 @@ def index_images(image_collection, text_collection):
                     embeddings=upsert_embeddings,
                     metadatas=upsert_metadatas,
                 )
-                ocr_texts = apply_OCR(to_process)
-
-                # Process OCR and text embeddings individually
-                for i in range(len(to_process)):
-                    if ocr_texts[i] is not None:
-                        text_embeddings = get_text_embeddings(ocr_texts[i])
-                        text_collection.upsert(
-                            ids=[to_process[i]], embeddings=[text_embeddings]
-                        )
 
             pbar.update(min(batch_size, len(paths) - i))
 

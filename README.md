@@ -3,10 +3,13 @@
 
 
 CLIPPyX is a powerful system-wide image search and management tool that offers versatile search options to find images based on their content, text, and visual similarity. With its advanced features, you can effortlessly locate the desired images across your entire computer's disk(s), regardless of their location or file names.
+</div>
 
 ----------------------------------------
 
-</div>
+> [!NOTE]  
+> This branch is using [Multimodal Embed 3](https://cohere.com/blog/multimodal-embed-3) instead of the default pipeline. Install CLIPPYx then set `openai_api_key` in `config.yaml` to use this version
+
 
 ![CLIPPyX Demo](assets/fastgif.gif)
 
