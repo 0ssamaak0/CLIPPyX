@@ -24,7 +24,7 @@ CLIPPyX is a powerful system-wide image search and management tool that offers v
 ![CLIPPyX Overview](assets/CLIPPyX_diag.png)
 
 - **Everything SDK**:
-CLIPPyX uses [Voidtools Everything SDK](https://www.voidtools.com/support/everything/sdk/) to list the paths of all images on the system.
+<!-- CLIPPyX uses [Voidtools Everything SDK](https://www.voidtools.com/support/everything/sdk/) to list the paths of all images on the system. -->
 
 - **CLIP**:
 [OpenAI's CLIP](https://openai.com/index/clip/) is the main component of CLIPPyX. It's to store all image embeddings in vector database to query on later.
@@ -33,24 +33,27 @@ CLIPPyX uses [Voidtools Everything SDK](https://www.voidtools.com/support/everyt
 OCR is applied to all images to extract text from them, then these texts are embedded using a text embedding model and stored in a vector database to perfrom text-based search.
 
 - **CLIPPyX Server**:
-CLIPPyX server receives the search query from the UI, then it queries the collections of image embeddings and text embeddings to return the relevant images.
+CLIPPyX server receives the search query from the [UI](#User-Interface), then it queries the collections of image embeddings and text embeddings to return the relevant images.
 
 # Getting Started
 ## Basic Installation
-- Install & Run [Everything](https://www.voidtools.com/) in your Windows machine
-- Install in your env[Pytorch](https://pytorch.org/)
+- Install [Pytorch](https://pytorch.org/)
 - Clone the repository
 - in the root directory, run the command
 
 ```
 pip install -e .
 ```
+- Select the paths to include & exclude in your search, and the models to use as well, run the setting UI
+```
+CLIPPyX --settings
+```
 - to start CLIPPyX server, run 
 ```
 CLIPPyX
 ```
 
-After some automatic downloads (Everything SDK, Models from 🤗 Transformers), you should see the indexing process starting. Then the server will be ready to receive search queries.
+Some models may download automatically the first time you run CLIPPyX, then you should see the indexing process starting. Then the server will be ready to receive search queries.
 
 ```
  * Serving Flask app 'server'
@@ -66,19 +69,6 @@ you can check the server is running be sending a simple request to the server us
 ```
 curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"Enter your query here\"}" http://localhost:23107/clip_text
 ```
-## Alternative Models
-For more memory efficient and faster indexing and search, there're alternative for both `CLIP` and `Text Embedding` models
-
-- [Using Apple's Mobile CLIP](https://github.com/0ssamaak0/CLIPPyX/tree/main/CLIP)
-- [Using GGUF from llama.cpp](https://github.com/0ssamaak0/CLIPPyX/tree/main/text_embeddings)
-
-## Running CLIPPyX server in WSL
-Getting the Paths of all images must be done in **Windows** to run `Everything SDK`, However, running the server itself in **WSL** is a good alternative, especially when using [Alternative Models](#alternative-models) due some issues or complex setup process on **Windows**
-
-- Assuming you already have **WSL** installed, in a new environment, follow the [same installation steps](#basic-installation) (don't start the server)
-- in `config.yaml` change `server_os` to `wsl`
-- in `server_wsl.sh` add path to your WSL python environmen (example provided)
-- in your **Windows** powershell or command prompt , run `CLIPPyX` command. This will use Everything SDK in Windows, then start the server in **WSL**.
 
 # User Interface
 Having CLIPPyX server running, you can use any UI capable of sending HTTP requests to the server, you can customize any UI to do this, or use one of the provided UIs.
