@@ -8,7 +8,7 @@ CLIPPyX is a powerful system-wide image search and management tool that offers v
 ----------------------------------------
 
 > [!NOTE]  
-> This branch is using [Multimodal Embed 3](https://cohere.com/blog/multimodal-embed-3) instead of the default pipeline. Install CLIPPYx then set `openai_api_key` in `config.yaml` to your Cohere API to use this version
+> This branch is using [Multimodal Embed 3](https://cohere.com/blog/multimodal-embed-3) instead of the default pipeline. Install CLIPPYx then set `cohere_api_key` in `config.yaml` or through the settings UI
 
 
 ![CLIPPyX Demo](assets/fastgif.gif)

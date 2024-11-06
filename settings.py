@@ -2,11 +2,12 @@ import tkinter as tk
 from tkinter import messagebox
 import ttkbootstrap as ttk
 import darkdetect
+import warnings
+
+warnings.filterwarnings("ignore")
 
 from settings.config_manager import load_config, save_config
 from settings.directory_manager import DirectoryManager
-from settings.clip_manager import CLIPManager
-from settings.text_embed_manager import TextEmbedManager
 
 
 class CLIPPyXSettings:
@@ -19,13 +20,11 @@ class CLIPPyXSettings:
         theme_dict = {"Light": "lumen", "Dark": "darkly"}
         self.root = ttk.Window(themename=theme_dict[theme])
         self.root.title("CLIPPyX Settings")
-        self.root.minsize(840, 860)
+        self.root.minsize(840, 610)
         self.root.iconphoto(False, tk.PhotoImage(file="assets/icon.png"))
 
         self.create_main_frame()
         self.create_directory_options()
-        self.create_clip_options()
-        self.create_text_embed_options()
         self.create_buttons()
 
     def create_main_frame(self):
@@ -52,11 +51,15 @@ class CLIPPyXSettings:
     def create_directory_options(self):
         self.directory_manager = DirectoryManager(self.frame, self.config)
 
-    def create_clip_options(self):
-        self.clip_manager = CLIPManager(self.frame, self.config)
+        # Add entry for cohere_api_key
+        api_key_label = ttk.Label(self.frame, text="Cohere API Key:")
+        api_key_label.pack(pady=5, anchor="w")
 
-    def create_text_embed_options(self):
-        self.text_embed_manager = TextEmbedManager(self.frame, self.config)
+        self.api_key_entry = ttk.Entry(self.frame)
+        self.api_key_entry.pack(fill=tk.X, padx=10)
+
+        # Populate with existing config value if available
+        self.api_key_entry.insert(0, self.config.get("cohere_api_key", ""))
 
     def create_buttons(self):
         buttons_frame = ttk.Frame(self.frame)
@@ -72,8 +75,9 @@ class CLIPPyXSettings:
     def save_changes(self):
         # Update config with values from all managers
         self.config.update(self.directory_manager.get_config())
-        self.config.update(self.clip_manager.get_config())
-        self.config.update(self.text_embed_manager.get_config())
+
+        # Save cohere_api_key from entry field
+        self.config["cohere_api_key"] = self.api_key_entry.get()
 
         save_config(self.config, "config.yaml")
         messagebox.showinfo("Success", "Configuration saved successfully!")

@@ -3,7 +3,6 @@ from tqdm import tqdm
 import os
 import base64
 import cohere
-import time
 import sys
 import yaml
 from Index.scan import read_from_csv
@@ -17,24 +16,18 @@ with open("config.yaml", "r") as f:
 
 deep_scan = config["deep_scan"]
 batch_size = config["batch_size"]
-co = cohere.ClientV2(api_key=config["text_embed"]["openai_api_key"])
+co = cohere.ClientV2(api_key=config["cohere_api_key"])
 
 
-def get_clip_image(image_paths):
-    embeddings = []
-    for image in image_paths:
-        try:
-            processed_image = image_to_base64_data_url(image)
-            embeddings.append(
-                co.embed(
-                    model="embed-english-v3.0",
-                    images=[processed_image],
-                    input_type="image",
-                    embedding_types=["float"],
-                ).embeddings.float_[0]
-            )
-        except:
-            print(image)
+# Functions For Cohere Embed 3 (Instead of default pipeline)
+def get_clip_image(image_path):
+    processed_image = image_to_base64_data_url(image_path=image_path)
+    embeddings = co.embed(
+        model="embed-english-v3.0",
+        images=[processed_image],
+        input_type="image",
+        embedding_types=["float"],
+    ).embeddings.float_[0]
     return embeddings
 
 
@@ -48,30 +41,36 @@ def get_clip_text(text):
     return embeddings
 
 
-# if config["clip"]["provider"] == "HF_transformers":
-#     from CLIP.hftransformers_clip import get_clip_image, get_clip_text
-# elif config["clip"]["provider"] == "mobileclip":
-#     from CLIP.mobile_clip import get_clip_image, get_clip_text
-
-# if config["text_embed"]["provider"] == "HF_transformers":
-#     from text_embeddings.hftransformers_embeddings import get_text_embeddings
-# elif config["text_embed"]["provider"] == "ollama":
-#     from text_embeddings.ollama_embeddings import get_text_embeddings
-# elif config["text_embed"]["provider"] == "llama_cpp":
-#     from text_embeddings.llamacpp_embeddings import get_text_embeddings
-# elif config["text_embed"]["provider"] == "openai_api":
-#     from text_embeddings.openai_api import get_text_embeddings
-# from ocr_model.OCR import apply_OCR
+import os
+import base64
+from PIL import Image
+import io
 
 
-def image_to_base64_data_url(image_path):
+def image_to_base64_data_url(image_path, max_size_bytes=5242880):
+    # Check file extension for MIME type
     _, file_extension = os.path.splitext(image_path)
     file_type = file_extension[1:]
 
-    with open(image_path, "rb") as f:
-        enc_img = base64.b64encode(f.read()).decode("utf-8")
-        enc_img = f"data:image/{file_type};base64,{enc_img}"
-    return enc_img
+    # Open the image using PIL
+    with Image.open(image_path) as img:
+        # Reduce the image size if it exceeds the max size
+        buffer = io.BytesIO()
+        img.save(buffer, format=img.format)
+
+        # Check if resizing is needed
+        if buffer.tell() > max_size_bytes:
+            # Resize the image until it's under the max size
+            quality = 85  # Starting quality level
+            while buffer.tell() > max_size_bytes and quality > 10:
+                buffer = io.BytesIO()
+                img.save(buffer, format="JPEG", quality=quality)
+                buffer.seek(0)
+                quality -= 10  # Lower quality in increments
+
+        # Encode the resized image to base64
+        enc_img = base64.b64encode(buffer.getvalue()).decode("utf-8")
+        return f"data:image/{file_type};base64,{enc_img}"
 
 
 def create_vectordb(path):
@@ -96,31 +95,26 @@ def create_vectordb(path):
     image_collection = client.get_or_create_collection(
         "images", metadata={"hnsw:space": "cosine"}
     )
-    text_collection = client.get_or_create_collection(
-        "texts", metadata={"hnsw:space": "cosine"}
-    )
-    return image_collection, text_collection
+    return image_collection, None
 
 
-def index_images(image_collection, text_collection):
+def index_images(image_collection):
     """
     Index images in the database.
 
     This function iterates over all image paths in the OS-specific format (os_paths), and for each path,
     it checks if the image is already in the image collection using the original path. If not, it gets
-    the image embeddings and upserts them into the image collection. It also applies OCR to the image
-    and upserts the text embeddings into the text collection.
+    the embeddings using Embed 3 Multimodal model
 
     Args:
         os_paths (list): The list of image paths in OS-specific format. These paths are used to read
-                         the images and apply OCR.
+                         the images.
         original_paths (list): The list of original image paths. These paths are used as IDs in the
-                               image and text collections.
+                               image collection.
         image_collection (Collection): The image collection in the database.
-        text_collection (Collection): The text collection in the database.
     """
     paths, averages = read_from_csv("paths.csv")
-    with tqdm(total=len(paths), desc="Indexing images") as pbar:
+    with tqdm(total=len(paths), desc="Indexing images using Cohere Embed 3") as pbar:
         for i in range(0, len(paths), batch_size):
             batch_paths = paths[i : i + batch_size]
             to_process = []
@@ -139,7 +133,10 @@ def index_images(image_collection, text_collection):
 
             if to_process:
                 # Process CLIP embeddings in batch
-                image_embeddings = get_clip_image(to_process)
+                image_embeddings = []
+                for image_path in to_process:
+                    image_embeddings.append(get_clip_image(image_path))
+                    pbar.update(1)
 
                 # Prepare data for batch upsert
                 upsert_ids = to_process
@@ -155,10 +152,8 @@ def index_images(image_collection, text_collection):
                     metadatas=upsert_metadatas,
                 )
 
-            pbar.update(min(batch_size, len(paths) - i))
 
-
-def clean_index(image_collection, text_collection, verbose=False):
+def clean_index(image_collection, verbose=False):
     """
     Clean up the database.
 
@@ -169,7 +164,6 @@ def clean_index(image_collection, text_collection, verbose=False):
         paths (list): The list of original image paths. These paths are used as IDs in the
                                image and text collections.
         image_collection (Collection): The image collection in the database.
-        text_collection (Collection): The text collection in the database.
     """
     paths, averages = read_from_csv("paths.csv")
     for i, id in tqdm(
@@ -181,9 +175,3 @@ def clean_index(image_collection, text_collection, verbose=False):
             if verbose:
                 print(f"deleting: {id} from image_collection")
             image_collection.delete(ids=[id])
-            try:
-                if verbose:
-                    print(f"deleting: {id} from text_collection")
-                text_collection.delete(ids=[id])
-            except:
-                pass

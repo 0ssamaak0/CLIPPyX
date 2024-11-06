@@ -1,17 +1,6 @@
 batch_size: 32
-clip:
-  HF_transformers_clip: openai/clip-vit-base-patch16
-  mobileclip_checkpoint: mobileclip_s0
-  provider: mobileclip
+cohere_api_key: <Enter Your Cohere API Key>
 deep_scan: true
 exclude_directories: []
 include_directories: []
 scan_method: default
-text_embed:
-  HF_transformers_embeddings: nomic-ai/nomic-embed-text-v1.5
-  embedding_gguf: <path_to_gguf_model>
-  ollama_embeddings: 0ssamaak0/nomic-embed-text
-  openai_api_key: <openai_api_key>
-  openai_endpoint: https://api.openai.com/v1
-  openai_model: text-embedding-ada-002
-  provider: ollama
