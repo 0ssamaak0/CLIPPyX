@@ -88,24 +88,24 @@ def search_clip_image(
     return paths, similarities
 
 
-# def search_embed_text(text, text_collection, top_k=5, threshold=0):
-#     """
-#     Search for texts that are semantically similar to the input text.
+def search_embed_text(text, text_collection, top_k=5, threshold=0):
+    """
+    Search for texts that are semantically similar to the input text.
 
-#     Args:
-#         text (str): The input text to search for.
-#         text_collection: The collection of texts to search in.
+    Args:
+        text (str): The input text to search for.
+        text_collection: The collection of texts to search in.
 
-#     Returns:
-#         tuple: A tuple containing the paths of the top 5 texts and their distances from the input text.
-#     """
-#     text_embedding = get_text_embeddings(text)
-#     results = text_collection.query(text_embedding, n_results=top_k)
-#     similarities = [1 - d for d in results["distances"][0]]
-#     paths, similarities = [
-#         p for p, d in zip(results["ids"][0], similarities) if d > threshold
-#     ], [d for d in similarities if d > threshold]
-#     return paths, similarities
+    Returns:
+        tuple: A tuple containing the paths of the top 5 texts and their distances from the input text.
+    """
+    text_embedding = get_text_embeddings(text)
+    results = text_collection.query(text_embedding, n_results=top_k)
+    similarities = [1 - d for d in results["distances"][0]]
+    paths, similarities = [
+        p for p, d in zip(results["ids"][0], similarities) if d > threshold
+    ], [d for d in similarities if d > threshold]
+    return paths, similarities
 
 
 # Flask App
@@ -138,15 +138,15 @@ def clip_image_route():
     return jsonify(paths)
 
 
-# @app.route("/ebmed_text", methods=["POST"])
-# def ebmed_text_route():
-#     query = request.json.get("query", "")
-#     threshold = float(request.json.get("threshold", 0))
-#     top_k = int(request.json.get("top_k", 5))
-#     paths, distances = search_embed_text(query, text_collection, top_k, threshold)
-#     # for path, distance in zip(paths, distances):
-#     #     print(f"Path: {path}, Distance: {distance}")
-#     return jsonify(paths)
+@app.route("/ebmed_text", methods=["POST"])
+def ebmed_text_route():
+    query = request.json.get("query", "")
+    threshold = float(request.json.get("threshold", 0))
+    top_k = int(request.json.get("top_k", 5))
+    paths, distances = search_embed_text(query, text_collection, top_k, threshold)
+    # for path, distance in zip(paths, distances):
+    #     print(f"Path: {path}, Distance: {distance}")
+    return jsonify(paths)
 
 
 @app.route("/")
