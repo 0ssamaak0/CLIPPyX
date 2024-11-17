@@ -8,7 +8,7 @@ CLIPPyX is an AI Assisted search tool that allows search in image content and te
 
 </div>
 
-![CLIPPyX Demo](assets/fastgif.gif)
+![CLIPPyX Demo](assets/fastgif_mac.gif)
 
 🎬 [Video at 1x speed](https://x.com/0ssamaak0/status/1797373251049713827)
 
