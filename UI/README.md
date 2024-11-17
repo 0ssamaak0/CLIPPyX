@@ -1,19 +1,8 @@
 # Available UIs
 
-## CLIPPyX Web UI
+CLIPPyX is designed to work with any UI capable of sending HTTP requests to the server. You can customize any UI to do this, or use one of the provided UIs.
 
-![webui](assets/webui.png)
-
-Simplest UI to interact with CLIPPyX server, it's a web interface that sends search queries to the server and displays the results.
-
-## Flow Launcher Plugin
-
-Better Option, easy access from anywhere in the system. Just type `cx` in the Flow Launcher search bar and start searching.
-
-## PowerToys Run Plugin 
-
-![sample_image](assets/powertoys_sample.png)
-
-A versatile and powerful option for Windows users. Integrates seamlessly with PowerToys Run, allowing you to quickly search and interact with the CLIPPyX server directly from your desktop. Just type `cx` followed by your query in the PowerToys Run search bar to get instant results.
-
-
+- [WebUI](https://github.com/0ssamaak0/CLIPPyX/tree/main/UI/CLIPPyX%20WebUI) (All platforms - no installation required)
+- [RayCast](https://www.raycast.com/0ssamaak0/clippyx) (MacOS)
+- [Flow Launcher](https://github.com/0ssamaak0/CLIPPyX/tree/main/UI/Flow%20Launcher) (Windows)
+- [Powertoys Run](https://github.com/0ssamaak0/CLIPPyX/tree/main/UI/Powertoys%20Run) (Windows)
