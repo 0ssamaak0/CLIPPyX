@@ -91,13 +91,13 @@ You can run everything in CLIPPyX using [Cohere Multimodal Embed 3](https://cohe
 Thanks to [Cohere](https://cohere.com) for sponsoring this project!
 
 # User Interface
-Having CLIPPyX server running, you can use any UI capable of sending HTTP requests to the server, you can customize any UI to do this, or use one of the provided UIs.
+CLIPPyX is designed to work with any UI capable of sending HTTP requests to the server. You can customize any UI to do this, or use one of the provided UIs.
 
-Currently CLIPPyX Supports:
-- Simple WebUI
-- Raycast (MacOS)
-- Flow Launcher (Windows)
-- PowerToys Run (Windows)
+- [WebUI](https://github.com/0ssamaak0/CLIPPyX/tree/main/UI/CLIPPyX%20WebUI) (All platforms - no installation required)
+- [RayCast](https://www.raycast.com/0ssamaak0/clippyx) (MacOS)
+- [Flow Launcher](https://github.com/0ssamaak0/CLIPPyX/tree/main/UI/Flow%20Launcher) (Windows)
+- [Powertoys Run](https://github.com/0ssamaak0/CLIPPyX/tree/main/UI/Powertoys%20Run) (Windows)
+
 
 Check [UI page](https://github.com/0ssamaak0/CLIPPyX/tree/main/UI) for more information
 
