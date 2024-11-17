@@ -2,13 +2,15 @@ This release .....
 
 # New Features 🌟
 - Image search can work with any image locally or form URL
-- Image paths are stored to SQLite database instead of text file for faster access
-- parallel clip model and parsing
-- parrlel ocr and reading
-- separate file for memory efficiency
+- Support for Apple Silicon GPU
+- Parallel Image indexing and inference for CLIP and OCR
+- Separation of indexing and searching scripts for memory optimization
+- Voidtool Everything is no longer required, it's optional now
 - text embeddings now support hugging face transformers, Llama.cpp, Ollama and any OpenAI Compatible API
-- top k and threshold
+- top k and threshold selection for all functionalities
 - Settings UI
+- Powertoys run Plugin for Windows
+- Raycast Extension for Mac
 
 # Bug Fixes 🐞
 - If new image is saved with the same name as previous image e.g., `untitlied` will be reindexed if `deep_scan` is activated from config
