@@ -84,6 +84,12 @@ You can check the server is running by sending a simple request to the server us
 curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"Enter your query here\"}" http://localhost:23107/clip_text
 ```
 
+## Alternative Installation
+![Cohere Embed 3](https://cohere.com/_next/image?url=https%3A%2F%2Fcohere-ai.ghost.io%2Fcontent%2Fimages%2F2024%2F10%2FEmbed-Multi-Modal-Hero.png&w=3840&q=75)
+You can run everything in CLIPPyX using [Cohere Multimodal Embed 3](https://cohere.com/blog/multimodal-embed-3) by using [Cohere-embed](https://github.com/0ssamaak0/CLIPPyX/tree/Cohere-embed) Branch
+
+Thanks to [Cohere](https://cohere.com) for sponsoring this project!
+
 # User Interface
 Having CLIPPyX server running, you can use any UI capable of sending HTTP requests to the server, you can customize any UI to do this, or use one of the provided UIs.
 
@@ -97,8 +103,6 @@ Check [UI page](https://github.com/0ssamaak0/CLIPPyX/tree/main/UI) for more info
 
 # Common Issues
 Check the [Common Issues](https://github.com/0ssamaak0/CLIPPyX/blob/main/docs/Common%20Issues.md) page for common issues and their solutions.
-
-
 
 # Future Work
 Check [Issues](https://github.com/0ssamaak0/CLIPPyX/issues) for future work and contributions. Don't hesitate to open a new issue for any feature request or bug report.
