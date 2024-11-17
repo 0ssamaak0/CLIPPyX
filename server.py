@@ -70,9 +70,6 @@ def search_clip_image(
     Returns:
         tuple: A tuple containing two lists. The first list contains the paths of the top 5 images (or top 6 if get_self is True). The second list contains the corresponding distances of these images from the input image.
     """
-    # TODO handle wsl later
-    # if os.name == "posix":
-    #     image_path = image_path.replace("\\", "/").replace("C:", "/mnt/c")
     image_embedding = get_clip_image([image_path])
     results = image_collection.query(image_embedding, n_results=top_k)
     similarities = [1 - d for d in results["distances"][0]]
@@ -157,12 +154,6 @@ def serve_index():
 @app.route("/images/<path:filename>")
 def serve_image(filename):
     filename = os.path.join("/", filename)
-    # TODO handle WSL later
-    # if os.name == "posix":
-    #     filename = filename.replace("\\", "/").replace("C:", "/mnt/c")
-    # # Not needed for now
-    # LOCAL_IMAGE_DIR = os.getenv("LOCAL_IMAGE_DIR")
-    # assert filename.startswith(LOCAL_IMAGE_DIR)
     return send_from_directory(os.path.dirname(filename), os.path.basename(filename))
 
 
