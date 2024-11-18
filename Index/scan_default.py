@@ -22,8 +22,10 @@ def scan_directory(directory, exclude_directories):
     try:
         with os.scandir(directory) as entries:
             for entry in entries:
-                if entry.is_file() and entry.name.lower().endswith(
-                    tuple(image_extensions)
+                if (
+                    entry.is_file()
+                    and not entry.name.startswith("._")
+                    and entry.name.lower().endswith(tuple(image_extensions))
                 ):
                     images.append(entry.path)
                 elif entry.is_dir():
