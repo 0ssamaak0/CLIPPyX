@@ -5,7 +5,9 @@ clip:
   provider: mobileclip
 deep_scan: true
 exclude_directories: []
-include_directories: []
+include_directories:
+- /Volumes/KINGSTON
+- /Users/usamaahmed/Pictures
 scan_method: default
 text_embed:
   HF_transformers_embeddings: nomic-ai/nomic-embed-text-v1.5
