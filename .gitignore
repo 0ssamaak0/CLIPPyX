@@ -1,11 +1,7 @@
-__pycache__/
 db/
 checkpoints/
-Everything-SDK/
-images/
-ml-mobileclip/
-images_paths.txt
 CLIPPyX.egg-info/
+config.yaml
 
 *.csv
 *.db

@@ -11,7 +11,7 @@ with open(path.join(here, "README.md"), encoding="utf-8") as f:
 
 setuptools.setup(
     name="CLIPPyX",
-    version="0.1",
+    version="1.0.1",
     author="0ssamaak0",
     author_email="0ssamaak0@gmail.com",
     description="CLIPPyX provides an OS-wide image search that supports semantic search in both image content and text on images",
