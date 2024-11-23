@@ -54,9 +54,9 @@ The settings you can set are:
     - Voidtools Everything (Windows Only): If you have [Everything](https://www.voidtools.com) installed, you can use its index
 - CLIP Provider: 
     - Apple's [MobileClip](https://machinelearning.apple.com/research/mobileclip) 
-    - any CLIP model from Huggingface 🤗 Transformers
+    - any CLIP model from Hugging Face 🤗 Transformers
 - Text Embedding Provider: 
-    - Any text embedding model from Huggingface 🤗 Transformers
+    - Any text embedding model from Hugging Face 🤗 Transformers
     - Ollama
     - llama.cpp
     - Any OpenAI Compatible API (e.g., Fireworks.ai)
