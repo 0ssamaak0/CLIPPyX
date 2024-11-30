@@ -1,0 +1,28 @@
+services:
+  clippyx:
+    image: ghcr.io/hoeflechner/clippyx:docker
+    container_name: clippyx
+    restart: unless-stopped
+    ports:
+      - "23107:23107"
+    volumes:
+    # provide your config.yaml
+      - ./config.yaml:/config.yaml
+    # ./ path to your photos  
+      - ./:/photos:ro
+#      - db:/workspace/db
+#      - checkpoints:/workspace/checkpoints
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+#volumes:
+#  db:
+#  checkpoints:

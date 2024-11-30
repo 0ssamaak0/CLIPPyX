@@ -2,6 +2,7 @@ db/
 checkpoints/
 CLIPPyX.egg-info/
 config.yaml
+__pycache__
 
 *.csv
 *.db
