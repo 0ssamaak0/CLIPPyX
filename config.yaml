@@ -2,11 +2,10 @@ batch_size: 32
 clip:
   HF_transformers_clip: openai/clip-vit-base-patch16
   mobileclip_checkpoint: mobileclip_s0
-  provider: HF_transformers
+  provider: mobileclip
 deep_scan: false
 exclude_directories: []
-include_directories:
-- /photos
+include_directories: []
 scan_method: default
 text_embed:
   HF_transformers_embeddings: nomic-ai/nomic-embed-text-v1.5
