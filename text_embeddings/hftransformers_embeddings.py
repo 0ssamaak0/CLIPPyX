@@ -6,7 +6,7 @@ import yaml
 # Load the configuration file
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
-checkpoint = config["clip"]["HF_transformers_embeddings"]
+checkpoint = config["text_embed"]["HF_transformers_embeddings"]
 
 
 def mean_pooling(model_output, attention_mask):
