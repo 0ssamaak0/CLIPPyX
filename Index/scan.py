@@ -22,7 +22,7 @@ def process_image(path):
         return (path, 0)
 
 
-def save_to_csv(image_paths, filename="paths.csv", save_average=False):
+def save_to_csv(image_paths, filename="../db/paths.csv", save_average=False):
     """
     Saves the paths and, optionally, average pixel values of images to a CSV file.
 
@@ -54,7 +54,7 @@ def save_to_csv(image_paths, filename="paths.csv", save_average=False):
     print(f"Image paths{' and averages' if save_average else ''} saved to {filename}")
 
 
-def read_from_csv(filename="paths.csv"):
+def read_from_csv(filename="../db/paths.csv"):
     """
     Reads image paths and, optionally, their average pixel values from a CSV file.
 
@@ -66,7 +66,7 @@ def read_from_csv(filename="paths.csv"):
     """
     paths = []
     averages = []
-    with open("Index/paths.csv", "r", newline="", encoding="utf-8") as csvfile:
+    with open("db/paths.csv", "r", newline="", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in tqdm(reader):
             paths.append(row["path"])
@@ -104,7 +104,7 @@ def scan_and_save():
             print("Error in config.yaml: scan_method must be 'default' or 'Everything'")
             return False
 
-        save_to_csv(paths, "Index/paths.csv", config["deep_scan"])
+        save_to_csv(paths, "db/paths.csv", config["deep_scan"])
         return True
     except Exception as e:
         print(f"An error occurred: {e}")
