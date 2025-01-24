@@ -37,7 +37,9 @@ def getDb(path="db"):
 def save_to_db(image_paths, save_average=False, db="db"):
     paths_collection = getDb(db)
     ### Delete existing paths before inserting new ones.
-    paths_collection.delete(paths_collection.get()["ids"])
+    ids=paths_collection.get()["ids"]
+    if len(ids)>0:
+        paths_collection.delete(ids)
 
     image_paths = [path.replace("\\", "/") for path in image_paths]
     image_paths = list(set(image_paths))
