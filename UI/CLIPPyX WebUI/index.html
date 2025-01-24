@@ -2,19 +2,17 @@
 <html lang="en">
 
 <head>
-    <link rel="icon" href="https://raw.githubusercontent.com/0ssamaak0/CLIPPyX/main/assets/icon.png">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://raw.githubusercontent.com/0ssamaak0/CLIPPyX/main/assets/icon.png">
     <title>CLIPPyX WebUI</title>
     <link rel="stylesheet" href="CLIPPyX WebUI/styles.css">
 </head>
 
 <body>
-    <div style="display: flex; justify-content: center; margin: 5px">
-        <img src="https://raw.githubusercontent.com/0ssamaak0/CLIPPyX/main/assets/logo_text.png" alt="CLIPPyX Logo"
-            style="height: 50px;">
-    </div>
+    
     <div class="container">
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Enter text to search">
@@ -25,25 +23,20 @@
             </select>
             <button onclick="performSearch()" style="margin: 0 10px;">Search</button>
         </div>
-        <div class="search-options">
-            <div class="search-option">
-                <label for="threshold">Threshold:</label>
-                <input type="range" id="threshold" min="0" max="1" step="0.01" value="0">
-                <span id="threshold-value">0</span>
-            </div>
-            <div class="search-option">
-                <label for="top-k">Top K:</label>
-                <input type="number" id="top-k" min="1" max="99" value="10">
-            </div>
+        <div class="browser">
+            <div class="results" id="results"></div>
+            <div class="enlarged-img" id="enlarged-img-container"></div>
         </div>
-        <div class="loader" id="loader"></div>
-        <div class="results" id="results"></div>
+        <div class="loader" id="loader"></div>   
     </div>
-    <div class="enlarged-img" id="enlarged-img-container"></div>
+    
     <footer style="margin-top: 20px; text-align: center;">
-        <p> <i class="fab fa-github"></i>
+        <p> 
             <a href="https://github.com/0ssamaak0/CLIPPyX">
-                CLIPPyX
+                
+                <img src="https://raw.githubusercontent.com/0ssamaak0/CLIPPyX/main/assets/logo_text.png" alt="CLIPPyX Logo"
+                        style="height: 30px;">
+                <i class="fab fa-github"></i> 
             </a>
         </p>
     </footer>
@@ -52,36 +45,17 @@
         function changePlaceholder() {
             var select = document.getElementById('route-select');
             var input = document.getElementById('search-input');
-            var threshold = document.getElementById('threshold');
-            var thresholdValue = document.getElementById('threshold-value');
-            var topK = document.getElementById('top-k');
-
 
             if (select.value == 'clip_text') {
                 input.placeholder = 'Enter image caption or description';
-                threshold.value = 0.5;
-                thresholdValue.textContent = 0.5;
-                topK.value = 5;
             } else if (select.value == 'clip_image') {
                 input.placeholder = 'Enter image full path';
-                threshold.value = 0.7;
-                thresholdValue.textContent = 0.7;
-                topK.value = 10;
             } else if (select.value == 'ebmed_text') {
                 input.placeholder = 'Enter text to search for images with similar text';
-                threshold.value = 0.2;
-                thresholdValue.textContent = 0.2;
-                topK.value = 3;
             }
         }
 
         function performSearch() {
-            const query = document.getElementById('search-input').value;
-            const route = document.getElementById('route-select').value;
-            const threshold = parseFloat(document.getElementById('threshold').value);
-            const topK = parseInt(document.getElementById('top-k').value);
-            const port = window.location.port || 8080;  // Default to 8080 if no port is specified
-            const url = `http://${window.location.hostname}:${port}/${route}`;
             const loader = document.getElementById('loader');
             const resultsDiv = document.getElementById('results');
             const enlargedImgContainer = document.getElementById('enlarged-img-container');
@@ -89,25 +63,41 @@
             loader.style.display = 'block';
             resultsDiv.innerHTML = '';
             enlargedImgContainer.innerHTML = '';
+            loadImages()
+        }
+
+        function loadImages(){
+            const query = document.getElementById('search-input').value;
+            const route = document.getElementById('route-select').value;
+            const port = window.location.port || 8080;  // Default to 8080 if no port is specified
+            const url = `http://${window.location.hostname}:${port}/${route}`;
+            const resultsDiv = document.getElementById('results');
+            const count=20;
+            topK=count+resultsDiv.childElementCount
 
             fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ query: query, threshold: threshold, top_k: topK })
+                body: JSON.stringify({ query: query, threshold: 0, top_k: topK })
             })
                 .then(response => response.json())
                 .then(data => {
                     loader.style.display = 'none';
                     data.forEach(path => {
-                        const img = document.createElement('img');
-                        img.src = `http://${window.location.hostname}:${port}/images/${encodeURIComponent(path)}`;
-                        img.onclick = () => {
-                            displayEnlargedImage(img.src);
-                            highlightSelectedImage(img);
-                        };
-                        resultsDiv.appendChild(img);
+                        const id= `http://${window.location.hostname}:${port}/images/${encodeURIComponent(path)}`
+                        if (! document.getElementById(id)) {
+                            const img = document.createElement('img');
+                            img.id=id
+                            img.src = img.id;
+                            img.onclick = () => {
+                                displayEnlargedImage(img.src);
+                                highlightSelectedImage(img);
+                            };
+                            resultsDiv.appendChild(img);
+                            console.log(""+resultsDiv.childElementCount+" Images");
+                        }
                     });
                 })
                 .catch(error => {
@@ -135,6 +125,14 @@
             selectedImg.classList.add('selected-img');
         }
 
+        document.getElementById('results').addEventListener('scroll',()=>{
+            const element=document.getElementById('results')
+            // load new images if scrolled to 75%
+            if(element.scrollTop+element.clientHeight > 0.75*element.scrollHeight){
+                loadImages()
+            }
+        })
+
         // Add event listener for Enter key
         document.getElementById('search-input').addEventListener('keypress', function (event) {
             if (event.key === 'Enter') {
@@ -142,10 +140,6 @@
             }
         });
 
-        // Update threshold value display
-        document.getElementById('threshold').addEventListener('input', function() {
-            document.getElementById('threshold-value').textContent = this.value;
-        });
     </script>
 </body>
 

@@ -6,7 +6,7 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    width: 90%;
     margin: 40px auto;
     background-color: var(--container-background-color);
     padding: 40px;
@@ -63,13 +63,19 @@ button:hover {
     flex-wrap: wrap;
     gap: 30px;
     justify-content: center;
+    width: 33%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-color: var(--input-text-color) var(--input-background-color);
+    scrollbar-width: wide;
 }
 
 .results img {
-    width: calc(25% - 30px);
+    width: calc(100% - 30px);
     height: auto;
-    max-width: 100%;
-    object-fit: cover;
+    max-width: 300px;
+    min-width: 100px;
+    object-fit: scale-down;
     cursor: pointer;
     border-radius: 10px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -113,24 +119,25 @@ button:hover {
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
 }
 
+.browser {
+  display: flex;                  
+  flex-direction: row;            
+  flex-wrap: nowrap;              
+  justify-content: space-between;
+  max-height: 75vh;
+}
+
 .enlarged-img {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px;
+    text-align: center;
+    width: 66%;
 }
 
 .enlarged-img img {
-    max-width: 100%;
-    max-height: 600px;
     border-radius: 20px;
+    width: 100%;
+    max-height: 90%;
+    object-fit: scale-down;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.enlarged-img img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes spin {
@@ -189,7 +196,7 @@ button:hover {
 .threshold-container {
     display: flex;
     align-items: center;
-    width: 280px; /* Fixed width for the container */
+   /* width: 280px;  Fixed width for the container */
 }
 
 #threshold {
@@ -320,21 +327,4 @@ button:hover {
     }
 }
 
-footer {
-    background-color: var(--footer-background-color);
-    color: var(--footer-text-color);
-    padding: 20px;
-    text-align: center;
-    border-top: 1px solid var(--border-color);
-    margin-top: 40px;
-}
 
-footer a {
-    color: var(--footer-link-color);
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-footer a:hover {
-    color: var(--footer-link-hover-color);
-}
