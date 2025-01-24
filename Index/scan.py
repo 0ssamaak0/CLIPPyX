@@ -1,6 +1,9 @@
+# from Index.create_db import create_vectordb
+import chromadb
 from Index.scan_default import fast_scan_for_images
 from concurrent.futures import ThreadPoolExecutor
-import yaml, csv
+import yaml
+import csv
 from tqdm import tqdm
 from PIL import Image
 
@@ -22,39 +25,48 @@ def process_image(path):
         return (path, 0)
 
 
-def save_to_csv(image_paths, filename="paths.csv", save_average=False):
-    """
-    Saves the paths and, optionally, average pixel values of images to a CSV file.
+def getDb(path="db"):
+    client = chromadb.PersistentClient(
+        path
+    )
+    paths = client.get_or_create_collection(
+        "paths"
+    )
+    return paths
 
-    Args:
-        image_paths (list): A list of image file paths to process.
-        filename (str, optional): The name of the CSV file to save. Defaults to "image_paths.csv".
-        save_average (bool, optional): If True, saves the average pixel value of images. If False, does not save the average. Defaults to False.
-    """
-    with open(filename, "w", newline="", encoding="utf-8") as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(["path", "average"])
-        # Handle backslashes in Windows paths
-        image_paths = [path.replace("\\", "/") for path in image_paths]
-        image_paths = list(set(image_paths))
 
-        if save_average:
-            with ThreadPoolExecutor() as executor:
-                results = list(
-                    tqdm(
-                        executor.map(process_image, image_paths), total=len(image_paths)
-                    )
+def save_to_db(image_paths, save_average=False, db="db"):
+    paths_collection = getDb(db)
+    ### Delete existing paths before inserting new ones.
+    paths_collection.delete(paths_collection.get()["ids"])
+
+    image_paths = [path.replace("\\", "/") for path in image_paths]
+    image_paths = list(set(image_paths))
+
+    if save_average:
+        with ThreadPoolExecutor() as executor:
+            results = list(
+                tqdm(
+                    executor.map(process_image, image_paths), total=len(image_paths)
                 )
-            for result in results:
-                writer.writerow(result)
-        else:
-            for path in tqdm(image_paths):
-                writer.writerow([path, 0])
+            )
+        upsert_metadatas = [
+            {"average": result[1]} for result in results
+        ]
+    else:
+        upsert_metadatas = [
+            {"average": 0} for i in image_paths
+        ]
+        # Perform batch upsert for image collection
+    upsert_embeddings = [[0] for i in image_paths]
+    paths_collection.upsert(
+        ids=image_paths,
+        embeddings=upsert_embeddings,
+        metadatas=upsert_metadatas,
+    )
 
-    print(f"Image paths{' and averages' if save_average else ''} saved to {filename}")
 
-
-def read_from_csv(filename="paths.csv"):
+def read_from_db(db="db"):
     """
     Reads image paths and, optionally, their average pixel values from a CSV file.
 
@@ -64,13 +76,11 @@ def read_from_csv(filename="paths.csv"):
     Returns:
         tuple: Depending on read_average, returns a tuple containing one or two lists: one of the image paths and, if read_average is True, one of their average pixel values.
     """
-    paths = []
-    averages = []
-    with open("Index/paths.csv", "r", newline="", encoding="utf-8") as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in tqdm(reader):
-            paths.append(row["path"])
-            averages.append(int(row["average"]))
+    paths_collection = getDb(db)
+    paths = paths_collection.get()["ids"]
+    averages = [paths_collection.get(
+        ids=[path])["metadatas"][0]["average"] for path in paths]
+
     return (paths, averages)
 
 
@@ -104,7 +114,7 @@ def scan_and_save():
             print("Error in config.yaml: scan_method must be 'default' or 'Everything'")
             return False
 
-        save_to_csv(paths, "Index/paths.csv", config["deep_scan"])
+        save_to_db(paths, config["deep_scan"])
         return True
     except Exception as e:
         print(f"An error occurred: {e}")

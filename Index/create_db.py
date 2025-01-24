@@ -3,7 +3,7 @@ from tqdm import tqdm
 import os
 import sys
 import yaml
-from Index.scan import read_from_csv
+from Index.scan import read_from_db
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -76,7 +76,7 @@ def index_images(image_collection, text_collection):
         image_collection (Collection): The image collection in the database.
         text_collection (Collection): The text collection in the database.
     """
-    paths, averages = read_from_csv("paths.csv")
+    paths, averages = read_from_db()
     with tqdm(total=len(paths), desc="Indexing images") as pbar:
         for i in range(0, len(paths), batch_size):
             batch_paths = paths[i : i + batch_size]
@@ -137,7 +137,7 @@ def clean_index(image_collection, text_collection, verbose=False):
         image_collection (Collection): The image collection in the database.
         text_collection (Collection): The text collection in the database.
     """
-    paths, averages = read_from_csv("paths.csv")
+    paths, averages = read_from_db()
     for i, id in tqdm(
         enumerate(image_collection.get()["ids"]),
         total=len(image_collection.get()["ids"]),
