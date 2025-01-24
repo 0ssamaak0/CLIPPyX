@@ -1,6 +1,5 @@
 import os
 import time
-import csv
 from PIL import Image
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm

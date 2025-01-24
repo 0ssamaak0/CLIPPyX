@@ -3,7 +3,6 @@ import chromadb
 from Index.scan_default import fast_scan_for_images
 from concurrent.futures import ThreadPoolExecutor
 import yaml
-import csv
 from tqdm import tqdm
 from PIL import Image
 
@@ -68,10 +67,7 @@ def save_to_db(image_paths, save_average=False, db="db"):
 
 def read_from_db(db="db"):
     """
-    Reads image paths and, optionally, their average pixel values from a CSV file.
-
-    Args:
-        filename (str, optional): The name of the CSV file to read from. Defaults to "image_paths.csv".
+    Reads image paths and, optionally, their average pixel values from the db.
 
     Returns:
         tuple: Depending on read_average, returns a tuple containing one or two lists: one of the image paths and, if read_average is True, one of their average pixel values.
@@ -86,7 +82,7 @@ def read_from_db(db="db"):
 
 def scan_and_save():
     """
-    Scans for images based on the configuration specified in 'config.yaml' and saves the paths to a CSV file.
+    Scans for images based on the configuration specified in 'config.yaml' and saves the paths.
 
     The function supports two scanning methods: 'default' and 'Everything'. The 'default' method uses specified
     include and exclude directories to find images, while the 'Everything' method utilizes the Everything SDK for scanning.
