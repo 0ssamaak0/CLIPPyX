@@ -112,49 +112,102 @@ CORS(app)
 
 @app.route("/clip_text", methods=["POST"])
 def clip_text_route():
+    """
+    Handle a POST request to search images via text queries (using CLIP).
+
+    Retrieves the following JSON fields from the request:
+        - query (str): The text query to search for.
+        - threshold (float): The minimum similarity threshold. Defaults to 0.
+        - top_k (int): The number of top results to return. Defaults to 5.
+
+    Calls `search_clip_text` with these parameters to retrieve a list of image
+    paths (and their associated distances). Returns the list of image paths as JSON.
+
+    Returns:
+        flask.Response: A JSON response containing a list of image paths.
+    """
     query = request.json.get("query", "")
     threshold = float(request.json.get("threshold", 0))
     top_k = int(request.json.get("top_k", 5))
     print(f"threshold: {threshold} top_k: {top_k}")
     paths, distances = search_clip_text(query, image_collection, top_k, threshold)
     print(len(paths))
-    # for path, distance in zip(paths, distances):
-    #     print(f"Path: {path}, Distance: {distance}")
     return jsonify(paths)
 
 
 @app.route("/clip_image", methods=["POST"])
 def clip_image_route():
+    """
+    Handle a POST request to search images via an image query (using CLIP).
+
+    Retrieves the following JSON fields from the request:
+        - query (str): Base64-encoded or URL reference to the image.
+        - threshold (float): The minimum similarity threshold. Defaults to 0.
+        - top_k (int): The number of top results to return. Defaults to 5.
+
+    Calls `parse_image` to transform the input into a usable format, then uses
+    `search_clip_image` to find matching images in the collection. Returns the
+    list of matching image paths as JSON.
+
+    Returns:
+        flask.Response: A JSON response containing a list of image paths.
+    """
     query = request.json.get("query", "")
     threshold = float(request.json.get("threshold", 0))
     top_k = int(request.json.get("top_k", 5))
     query = parse_image(query)
     paths, distances = search_clip_image(query, image_collection, top_k, threshold)
-    # for path, distance in zip(paths, distances):
-    #     print(f"Path: {path}, Distance: {distance}")
     return jsonify(paths)
 
 
 @app.route("/ebmed_text", methods=["POST"])
 def ebmed_text_route():
+    """
+    Handle a POST request to search text embeddings.
+
+    Retrieves the following JSON fields from the request:
+        - query (str): The text to be embedded and searched.
+        - threshold (float): The minimum similarity threshold. Defaults to 0.
+        - top_k (int): The number of top results to return. Defaults to 5.
+
+    Calls `search_embed_text` to find matching text entries in the collection.
+    Returns the list of matching document paths (or identifiers) as JSON.
+
+    Returns:
+        flask.Response: A JSON response containing a list of text document paths.
+    """
     query = request.json.get("query", "")
     threshold = float(request.json.get("threshold", 0))
     top_k = int(request.json.get("top_k", 5))
     paths, distances = search_embed_text(query, text_collection, top_k, threshold)
-    # for path, distance in zip(paths, distances):
-    #     print(f"Path: {path}, Distance: {distance}")
     return jsonify(paths)
 
 
 @app.route("/")
 def serve_index():
+    """
+    Serve the main index page (index.html) from the static folder.
+
+    Returns:
+        flask.Response: The index.html file from the `app.static_folder`.
+    """
     return send_from_directory(app.static_folder, "index.html")
 
 
 @app.route("/images/<path:filename>")
 def serve_image(filename):
+    """
+    Serve an image file from within the images directory.
+
+    Args:
+        filename (str): The path to the image file within the images directory.
+
+    Returns:
+        flask.Response: The requested image file from its directory.
+    """
     filename = os.path.join("/", filename)
     return send_from_directory(os.path.dirname(filename), os.path.basename(filename))
+
 
 
 if __name__ == "__main__":
