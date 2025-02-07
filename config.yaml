@@ -11,6 +11,7 @@ text_embed:
   HF_transformers_embeddings: nomic-ai/nomic-embed-text-v1.5
   embedding_gguf: <path_to_gguf_model>
   ollama_embeddings: 0ssamaak0/nomic-embed-text
+  ollama_url: http://localhost:11434/api/embeddings
   openai_api_key: <openai_api_key>
   openai_endpoint: https://api.openai.com/v1
   openai_model: text-embedding-ada-002
