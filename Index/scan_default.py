@@ -36,9 +36,11 @@ def scan_directory(directory, exclude_directories):
                     ):
                         images.extend(scan_directory(entry.path, exclude_directories))
     except PermissionError:
-        print(f"Permission denied: {directory}")
+        # print(f"Permission denied: {directory}")
+        pass
     except Exception as e:
-        print(f"Error scanning {directory}: {e}")
+        # print(f"Error scanning {directory}: {e}")
+        pass
     return images
 
 
