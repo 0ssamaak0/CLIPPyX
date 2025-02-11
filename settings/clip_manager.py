@@ -4,12 +4,38 @@ from settings.tooltip import CreateToolTip
 
 
 class CLIPManager:
+    """
+    A GUI manager for configuring CLIP model settings using Tkinter.
+    
+    This class provides an interface for selecting a CLIP model provider and setting
+    the corresponding checkpoint options. It supports both Hugging Face Transformers
+    CLIP models and MobileCLIP variants.
+
+    Attributes:
+        parent (tk.Widget): The parent widget to attach the UI elements to.
+        config (dict): A dictionary containing initial configuration values.
+        clip_provider_var (tk.StringVar): Tracks the selected CLIP provider.
+        mobileclip_checkpoint_var (tk.StringVar): Tracks the selected MobileCLIP checkpoint.
+        transformers_clip_var (tk.StringVar): Tracks the Hugging Face CLIP model checkpoint.
+        mobileclip_frame (ttk.Frame): The frame containing MobileCLIP options.
+        hf_clip_frame (ttk.Frame): The frame containing Hugging Face CLIP options.
+    """
     def __init__(self, parent, config):
+        """
+        Initializes the CLIPManager with the given parent widget and configuration.
+        
+        Args:
+            parent (tk.Widget): The parent widget.
+            config (dict): A dictionary containing default CLIP settings.
+        """
         self.parent = parent
         self.config = config
         self.setup_ui()
 
     def setup_ui(self):
+        """
+        Sets up the graphical user interface for selecting CLIP settings.
+        """
         clip_frame = ttk.Frame(self.parent)
         clip_frame.pack(fill=tk.X, pady=10)
 
@@ -29,6 +55,12 @@ class CLIPManager:
         self.update_clip_options()
 
     def create_provider_selection(self, parent):
+        """
+        Creates a dropdown menu for selecting the CLIP provider.
+        
+        Args:
+            parent (tk.Widget): The parent widget to attach the selection UI.
+        """
         provider_frame = ttk.Frame(parent)
         provider_frame.pack(fill=tk.X, pady=5)
 
@@ -44,6 +76,15 @@ class CLIPManager:
         self.clip_provider_entry.pack(side=tk.LEFT, padx=5, pady=5)
 
     def create_mobileclip_options(self, parent):
+        """
+        Creates UI elements for selecting a MobileCLIP variant.
+        
+        Args:
+            parent (tk.Widget): The parent widget to attach the MobileCLIP options.
+        
+        Returns:
+            ttk.Frame: The frame containing MobileCLIP options.
+        """
         mobileclip_frame = ttk.Frame(parent)
         ttk.Label(mobileclip_frame, text="MobileCLIP Variant:").pack(
             side=tk.LEFT, padx=5, pady=5
@@ -64,6 +105,15 @@ class CLIPManager:
         return mobileclip_frame
 
     def create_hf_clip_options(self, parent):
+        """
+        Creates UI elements for specifying a Hugging Face Transformers CLIP model.
+        
+        Args:
+            parent (tk.Widget): The parent widget to attach the Hugging Face CLIP options.
+        
+        Returns:
+            ttk.Frame: The frame containing Hugging Face CLIP options.
+        """
         hf_clip_frame = ttk.Frame(parent)
         HF_checkpoint_label = ttk.Label(
             hf_clip_frame, text="Hugging Face 🤗 Transformers CLIP:"
@@ -80,6 +130,9 @@ class CLIPManager:
         return hf_clip_frame
 
     def update_clip_options(self, *args):
+        """
+        Updates the UI to show the appropriate options based on the selected CLIP provider.
+        """
         selected_provider = self.clip_provider_var.get()
 
         self.mobileclip_frame.pack_forget()
@@ -91,6 +144,12 @@ class CLIPManager:
             self.hf_clip_frame.pack(fill=tk.X, pady=5)
 
     def get_config(self):
+        """
+        Retrieves the current CLIP configuration from the UI.
+        
+        Returns:
+            dict: A dictionary containing the selected CLIP settings.
+        """
         return {
             "clip": {
                 "provider": self.clip_provider_var.get(),
