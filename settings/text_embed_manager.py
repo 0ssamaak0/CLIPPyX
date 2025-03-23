@@ -54,7 +54,7 @@ class TextEmbedManager:
         self.text_embed_provider_entry = ttk.Combobox(
             provider_frame,
             textvariable=self.text_embed_provider_var,
-            values=["HF_transformers", "ollama", "llama_cpp", "openai_api"],
+            values=["HF_transformers", "ollama", "llama_cpp", "openai_api", "MLX"],
             width=15,
         )
         self.text_embed_provider_entry.pack(side=tk.LEFT, padx=5, pady=5)
