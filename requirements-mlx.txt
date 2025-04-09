@@ -1,0 +1,11 @@
+requests
+pillow
+chromadb==1.0.0
+einops==0.8.0
+PyYAML==6.0.1
+mlx-embeddings==0.0.3
+ocrmac==1.0.0
+Flask
+flask-cors
+ttkbootstrap
+darkdetect

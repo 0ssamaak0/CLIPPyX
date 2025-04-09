@@ -19,6 +19,8 @@ if config["clip"]["provider"] == "HF_transformers":
     from CLIP.hftransformers_clip import get_clip_image, get_clip_text
 elif config["clip"]["provider"] == "mobileclip":
     from CLIP.mobile_clip import get_clip_image, get_clip_text
+elif config["clip"]["provider"] == "MLX":
+    from CLIP.mlx_clip import get_clip_image, get_clip_text
 
 if config["text_embed"]["provider"] == "HF_transformers":
     from text_embeddings.hftransformers_embeddings import get_text_embeddings
@@ -28,6 +30,9 @@ elif config["text_embed"]["provider"] == "llama_cpp":
     from text_embeddings.llamacpp_embeddings import get_text_embeddings
 elif config["text_embed"]["provider"] == "openai_api":
     from text_embeddings.openai_api import get_text_embeddings
+elif config["text_embed"]["provider"] == "MLX":
+    from text_embeddings.mlx_embeddings import get_text_embeddings
+
 from ocr_model.OCR import apply_OCR
 
 

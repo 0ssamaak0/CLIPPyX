@@ -1,7 +1,7 @@
 import setuptools
 from os import path
 
-with open("requirements.txt", "r") as f:
+with open("requirements-mlx.txt", "r") as f:
     requirements = f.read().splitlines()
 
 here = path.abspath(path.dirname(__file__))
