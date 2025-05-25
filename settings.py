@@ -7,6 +7,7 @@ from settings.config_manager import load_config, save_config
 from settings.directory_manager import DirectoryManager
 from settings.clip_manager import CLIPManager
 from settings.text_embed_manager import TextEmbedManager
+from settings.ocr_manager import OCRManager
 
 
 class CLIPPyXSettings:
@@ -28,6 +29,7 @@ class CLIPPyXSettings:
         directory_manager (DirectoryManager): Manages directory settings.
         clip_manager (CLIPManager): Manages CLIP-related settings.
         text_embed_manager (TextEmbedManager): Manages text embedding settings.
+        ocr_manager (OCRManager): Manages OCR-related settings.
     """
 
     def __init__(self):
@@ -59,6 +61,7 @@ class CLIPPyXSettings:
         self.create_directory_options()
         self.create_clip_options()
         self.create_text_embed_options()
+        self.create_ocr_options()
         self.create_buttons()
 
     def create_main_frame(self):
@@ -118,6 +121,15 @@ class CLIPPyXSettings:
         """
         self.text_embed_manager = TextEmbedManager(self.frame, self.config)
 
+    def create_ocr_options(self):
+        """
+        Create and initialize OCR settings.
+
+        Instantiates an OCRManager object, providing it the main content frame and
+        the current `config`. This allows the user to configure OCR parameters.
+        """
+        self.ocr_manager = OCRManager(self.frame, self.config)
+
     def create_buttons(self):
         """
         Create and configure buttons for saving and quitting.
@@ -147,6 +159,7 @@ class CLIPPyXSettings:
         self.config.update(self.directory_manager.get_config())
         self.config.update(self.clip_manager.get_config())
         self.config.update(self.text_embed_manager.get_config())
+        self.config.update(self.ocr_manager.get_config())
 
         save_config(self.config, "config.yaml")
         messagebox.showinfo("Success", "Configuration saved successfully!")
@@ -158,7 +171,6 @@ class CLIPPyXSettings:
         Blocks execution until the GUI is closed.
         """
         self.root.mainloop()
-
 
 
 if __name__ == "__main__":

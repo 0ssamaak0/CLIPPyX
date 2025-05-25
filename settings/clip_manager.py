@@ -1,5 +1,6 @@
 import tkinter as tk
 import ttkbootstrap as ttk
+import platform
 from settings.tooltip import CreateToolTip
 
 
@@ -67,10 +68,16 @@ class CLIPManager:
         ttk.Label(provider_frame, text="CLIP Provider:").pack(
             side=tk.LEFT, padx=5, pady=5
         )
+        
+        # Create a list of providers, with MLX only available on macOS
+        providers = ["HF_transformers", "mobileclip"]
+        if platform.system() == "Darwin":
+            providers.append("MLX")
+            
         self.clip_provider_entry = ttk.Combobox(
             provider_frame,
             textvariable=self.clip_provider_var,
-            values=["HF_transformers", "mobileclip"],
+            values=providers,
             width=15,
         )
         self.clip_provider_entry.pack(side=tk.LEFT, padx=5, pady=5)
