@@ -6,7 +6,7 @@ import yaml
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(stream=f)
 model = config["text_embed"]["ollama_embeddings"]
-
+url = config["text_embed"]["ollama_url"] #url = "http://localhost:11434/api/embeddings"
 
 def get_text_embeddings(text):
     """
@@ -19,7 +19,6 @@ def get_text_embeddings(text):
     list: The embeddings for the given text as a list of floats.
     """
     try:
-        url = "http://localhost:11434/api/embeddings"
         data = {"model": model, "prompt": text}
         response = requests.post(url, data=json.dumps(data))
     except:
